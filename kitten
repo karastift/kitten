@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!python3
 import argparse
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
@@ -7,26 +7,27 @@ Parser = argparse.ArgumentParser(description='Process some integers.')
 Parser.add_argument(
                     '-t', '--target',
                     type=str,
-                    help='Define the target that is to be scanned.'
+                    help='Define the target that is to be scanned.',
+)
+Parser.add_argument(
+                    '-mt', '--maxthreads',
+                    type=int,
+                    help='Max number of threads that will be opened at the same time.',
 )
 Parser.add_argument('-v', '--verbose',
                     action='store_true',
-                    help='Run verbosely.'
-)
-Parser.add_argument('-pr', '--portrange',
-                    type=int,
-                    help='Define the port range that is to be scanned.'
+                    help='Run verbosely.',
 )
 
-class Kitten():
+class Kitten:
 
     util_paw = None
     scan_paw = None
 
     options = {
         'target': 'localhost',
-        'portrange': 65535,
         'verbose': False,
+        'maxthreads': 100,
     }
 
     def __init__(self) -> None:
@@ -34,7 +35,8 @@ class Kitten():
         self.util_paw = UtilPaw(self.options)
         self.scan_paw = ScanPaw(self.options, self.util_paw)
 
-        print(self.scan_paw.get_open_ports())
+        open_ports = self.scan_paw.get_open_ports()
+        print(self.scan_paw.get_services(open_ports))
 
 
     def get_parsed_args(self) -> dict:
