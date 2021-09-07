@@ -1,10 +1,7 @@
-import json
-import sys
 import threading
 import socket
 from time import sleep
 from paws.util_paw import UtilPaw
-# import nmap
 
 class ScanPaw:
 
@@ -25,7 +22,8 @@ class ScanPaw:
         
         result = s.connect_ex((target, port))
         if result == 0:
-            self.util_paw.print_text(f'Found open port: {port}', verbose=True)
+            self.util_paw.print_text(f'Found open port: ', end='', verbose=True)
+            self.util_paw.print_text(port, color='cyan', verbose=True)
 
             return True
         
@@ -34,11 +32,14 @@ class ScanPaw:
 
 
     def get_services(self, ports: list):
-        # try:
-        #     open_ports[port] = socket.getservbyport(port, 'tcp')
-        # except socket.error:
-        #     open_ports[port] = 'unknown'
-        pass
+        services = dict.fromkeys(ports, 'unknown')
+        for port in ports:
+            try:
+                services[port] = socket.getservbyport(port, 'tcp')
+            except socket.error:
+                pass
+        
+        return services
 
     def get_open_ports(self) -> list:
 
@@ -49,13 +50,13 @@ class ScanPaw:
         try:
 
             target = socket.gethostbyname(self.options['target'])
-
+            
             def append_port_if_open(port: int):
                 if self.is_port_open(target, port): open_ports.append(port)
 
             while len(most_common_ports) != 0:
                 port = most_common_ports[0]
-                if threading.active_count() >= 500:
+                if threading.active_count() >= self.options['maxthreads']:
                     sleep(0.1)
                 else:
                     t = threading.Thread(target=append_port_if_open, args=[port])
