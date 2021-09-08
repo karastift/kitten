@@ -33,5 +33,5 @@ class UtilPaw:
     def get_most_common_ports(self) -> list:
         f = open('./data/port_data.json', 'r')
         data = json.load(f)
-        f.close()
+            
         return data['most_common_ports']

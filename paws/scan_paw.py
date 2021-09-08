@@ -1,3 +1,4 @@
+from multiprocessing.dummy import Pool
 import threading
 import socket
 from time import sleep
@@ -9,26 +10,28 @@ class ScanPaw:
 
     options = None
 
+    target = None
+
     def __init__(self, options, util_paw: UtilPaw) -> None:
         self.options = options
         self.util_paw = util_paw
 
         util_paw.print_text(text='Initialized ScanPaw...', verbose=True)
 
-    def is_port_open(self, target: str, port: int) -> bool:
+    def is_open_port(self, port: int) -> bool:
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(1)
         
-        result = s.connect_ex((target, port))
+        result = s.connect_ex((self.target, port))
         if result == 0:
             self.util_paw.print_text(f'Found open port: ', end='', verbose=True)
             self.util_paw.print_text(port, color='cyan', verbose=True)
 
-            return True
+            return port
         
         s.close()
-        return False
+        return None
 
 
     def get_services(self, ports: list):
@@ -41,7 +44,21 @@ class ScanPaw:
         
         return services
 
-    def get_open_ports(self) -> list:
+    # use this func
+    def set_target(self, target: str):
+        try:
+            self.target = socket.gethostbyname(target)
+        except socket.gaierror:
+            self.util_paw.print_text('Hostname could not be resolved.', color='red')
+            exit()
+
+    def get_open_ports_multiprocessing(self) -> list:
+        self.set_target(self.options['target'])
+
+        with Pool(75) as p:
+            return list(filter(None, p.map(self.is_open_port, self.util_paw.get_most_common_ports())))
+
+    def get_open_ports_threading(self) -> list:
 
         open_ports = []
         most_common_ports = self.util_paw.get_most_common_ports()
@@ -49,10 +66,10 @@ class ScanPaw:
 
         try:
 
-            target = socket.gethostbyname(self.options['target'])
+            self.set_target(self.options['target'])
             
             def append_port_if_open(port: int):
-                if self.is_port_open(target, port): open_ports.append(port)
+                if self.is_open_port(port) != None: open_ports.append(port)
 
             while len(most_common_ports) != 0:
                 port = most_common_ports[0]
@@ -66,9 +83,8 @@ class ScanPaw:
             while threading.active_count() != 1:
                 sleep(1)
 
-        except socket.gaierror:
-            self.util_paw.print_text('Hostname could not be resolved.', color='red')
         except socket.error:
             self.util_paw.print_text('Server does not respond.', color='red')
+            exit()
 
         return open_ports

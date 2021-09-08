@@ -3,20 +3,34 @@ import argparse
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
-Parser = argparse.ArgumentParser(description='Process some integers.')
-Parser.add_argument(
+# reasearch multiprocesses
+# how to coordinate multiple threads/processes
+
+# determine what mode is used (scan...)
+# decide which parser function and parser is parsing the args based on that
+# parse args to options (scan_options, ***_options, ...)
+# execute mode with given options (threading/multipr., how many th, target, add. ports...)
+
+scan_parser = argparse.ArgumentParser(description='Scan the target.')
+scan_parser.add_argument(
                     '-t', '--target',
                     type=str,
                     help='Define the target that is to be scanned.',
 )
-Parser.add_argument(
+scan_parser.add_argument(
                     '-mt', '--maxthreads',
                     type=int,
                     help='Max number of threads that will be opened at the same time.',
 )
-Parser.add_argument('-v', '--verbose',
+scan_parser.add_argument('-v', '--verbose',
                     action='store_true',
                     help='Run verbosely.',
+)
+
+kitten_parser = argparse.ArgumentParser(description='Execute kitten.')
+kitten_parser.add_argument(
+                    'mode',
+                    choices=['scan'],
 )
 
 class Kitten:
@@ -24,25 +38,28 @@ class Kitten:
     util_paw = None
     scan_paw = None
 
-    options = {
+    scan_options = {
         'target': 'localhost',
         'verbose': False,
         'maxthreads': 100,
+        'maxprocesses': 75,
     }
 
     def __init__(self) -> None:
-        self.options = self.get_parsed_args()
-        self.util_paw = UtilPaw(self.options)
-        self.scan_paw = ScanPaw(self.options, self.util_paw)
+        self.scan_options = self.get_parsed_args()
+        self.util_paw = UtilPaw(self.scan_options)
+        self.scan_paw = ScanPaw(self.scan_options, self.util_paw)
 
-        open_ports = self.scan_paw.get_open_ports()
+        open_ports = self.scan_paw.get_open_ports_threading()
+        print(self.scan_paw.get_services(open_ports))
+        open_ports = self.scan_paw.get_open_ports_multiprocessing()
         print(self.scan_paw.get_services(open_ports))
 
 
     def get_parsed_args(self) -> dict:
 
-        new_options = self.options
-        args = Parser.parse_args().__dict__
+        new_options = self.scan_options
+        args = scan_parser.parse_args().__dict__
 
         for key in args.keys():
             if args[key] != None:
