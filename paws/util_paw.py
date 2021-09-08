@@ -26,8 +26,14 @@ class UtilPaw:
         if color == 'blue': return print(f'{self.BLUE}{text}{self.ENDC}', end=end)
         if color == 'cyan': return print(f'{self.CYAN}{text}{self.ENDC}', end=end)
         if color == 'red': return print(f'{self.RED}{text}{self.ENDC}', end=end)
+        if color == 'bold': return print(f'{self.BOLD}{text}{self.ENDC}', end=end)
 
         raise f'Unsupported color "{color}"'
+
+    def print_prolog(self) -> None:
+        self.print_text('kitten', end='\t', color='bold')
+        self.print_text('early-access', end='\n', color='green')
+        self.print_text('( https://github.com/karastift/kitten.git )')
     
     def get_most_common_ports(self) -> list:
         f = open('./data/port_data.json', 'r')

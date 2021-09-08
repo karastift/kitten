@@ -29,6 +29,7 @@ class ArgPaw:
         subparsers = kitten_parser.add_subparsers(
             metavar='command',
             dest='cmd',
+            required=True,
         )
 
         self.__configure_scan_parser(subparsers)
