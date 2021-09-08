@@ -24,8 +24,7 @@ class Kitten:
         self.util_paw = UtilPaw(self.options)
         self.scan_paw = ScanPaw(self.options, self.util_paw)
 
-        print(self.options)
-        print(self.scan_paw.get_open_ports_multiprocessing())
+        self.util_paw.print_prolog()
 
 
 if __name__ == '__main__':
