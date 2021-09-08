@@ -24,9 +24,11 @@ class Kitten:
 
         self.util_paw.print_prolog()
 
-
-if __name__ == '__main__':
+def main():
     try:
         Kitten()
     except KeyboardInterrupt:
         print('\033[1m\nmeow.\033[0m')
+
+if __name__ == '__main__':
+    main()
