@@ -44,7 +44,6 @@ class ScanPaw:
         
         return services
 
-    # use this func
     def set_target(self, target: str):
         try:
             self.target = socket.gethostbyname(target)
@@ -53,10 +52,15 @@ class ScanPaw:
             exit()
 
     def get_open_ports_multiprocessing(self) -> list:
-        self.set_target(self.options['target'])
+        try:
+            self.set_target(self.options['target'])
 
-        with Pool(75) as p:
-            return list(filter(None, p.map(self.is_open_port, self.util_paw.get_most_common_ports())))
+            with Pool(self.options['maxprocesses']) as p:
+                return list(filter(None, p.map(self.is_open_port, self.util_paw.get_most_common_ports())))
+
+        except socket.error:
+            self.util_paw.print_text('Server does not respond.', color='red')
+            exit()
 
     def get_open_ports_threading(self) -> list:
 
