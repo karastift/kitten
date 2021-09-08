@@ -16,8 +16,6 @@ class ScanPaw:
         self.options = options
         self.util_paw = util_paw
 
-        util_paw.print_text(text='Initialized ScanPaw...', verbose=True)
-
     def is_open_port(self, port: int) -> bool:
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

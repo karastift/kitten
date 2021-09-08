@@ -32,4 +32,4 @@ if __name__ == '__main__':
     try:
         Kitten()
     except KeyboardInterrupt:
-        print('\033[1m meow.\033[0m')
+        print('\033[1m\nmeow.\033[0m')

@@ -17,7 +17,6 @@ class UtilPaw:
 
     def __init__(self, options) -> None:
         self.options = options
-        self.print_text(text='Initialized UtilPaw...', verbose=True)
 
     def print_text(self, text: str='', verbose: bool=False, color: str='white', end: str='\n') -> None:
         if verbose and not self.options['verbose']: return
