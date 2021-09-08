@@ -1,0 +1,14 @@
+MANIFEST.in
+README.md
+setup.cfg
+setup.py
+kitten/kitten.egg-info/PKG-INFO
+kitten/kitten.egg-info/SOURCES.txt
+kitten/kitten.egg-info/dependency_links.txt
+kitten/kitten.egg-info/entry_points.txt
+kitten/kitten.egg-info/requires.txt
+kitten/kitten.egg-info/top_level.txt
+kitten/paws/__init__.py
+kitten/paws/arg_paw.py
+kitten/paws/scan_paw.py
+kitten/paws/util_paw.py

@@ -5,7 +5,7 @@ setup(
     version='0.1',
     url='https://github.com/karastift/kitten.git',
     author='kara',
-    py_modules=['argparse', 'socket', 'json', 'time', 'multiprocessing', 'threading'],
+    install_requires=['argparse'],
     classifiers=[
         'Development Status :: 3 - Alpha',
 
@@ -22,4 +22,9 @@ setup(
     package_data={
         'sample': ['port_data.json'],
     },
+    entry_points={
+    'console_scripts': [
+        'kitten=kitten:main',
+    ],
+},
 )
