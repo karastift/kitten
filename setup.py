@@ -6,6 +6,7 @@ setup(
     url='https://github.com/karastift/kitten.git',
     author='kara',
     install_requires=['argparse'],
+    scripts=['kitten/kitten'],
     classifiers=[
         'Development Status :: 3 - Alpha',
 
@@ -22,9 +23,4 @@ setup(
     package_data={
         'sample': ['port_data.json'],
     },
-    entry_points={
-    'console_scripts': [
-        'kitten=kitten:main',
-    ],
-},
 )
