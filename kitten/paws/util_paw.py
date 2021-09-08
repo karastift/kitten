@@ -1,5 +1,4 @@
 import json
-from time import sleep
 
 class UtilPaw:
 
@@ -32,7 +31,7 @@ class UtilPaw:
 
     def print_prolog(self) -> None:
         self.print_text('kitten', end='\t', color='bold')
-        self.print_text('early-access', end='\n', color='green')
+        self.print_text('beta', end='\n', color='green')
         self.print_text('( https://github.com/karastift/kitten.git )')
     
     def get_most_common_ports(self) -> list:
