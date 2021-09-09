@@ -23,6 +23,16 @@ class Kitten:
         self.scan_paw = ScanPaw(self.options, self.util_paw)
 
         self.util_paw.print_prolog()
+        self.handle_command()
+        
+    def handle_command(self):
+        command = self.options['cmd']
+
+        if command == 'scan':
+            self.util_paw.print_scan_info()
+            open_ports = self.scan_paw.get_open_ports_multiprocessing()
+            services = self.scan_paw.get_services(open_ports)
+            self.util_paw.print_scan_results(services)
 
 def main():
     try:
