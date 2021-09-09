@@ -1,4 +1,5 @@
 import json
+import os
 from termcolor import cprint
 
 
@@ -63,7 +64,8 @@ scan results:
         self.print_text(f'{self.ENDC} ‾‾‾')
     
     def get_most_common_ports(self) -> list:
-        f = open('./kitten/data/port_data.json', 'r')
+        path = os.path.join(os.path.dirname(__file__), '../data/port_data.json')
+        f = open(path, 'r')
         data = json.load(f)
             
         return data['most_common_ports']
