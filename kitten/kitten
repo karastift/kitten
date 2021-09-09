@@ -3,8 +3,6 @@ from paws.arg_paw import ArgPaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
-# execute mode with given options (threading/multipr., how many th, target, add. ports...)
-
 
 class Kitten:
 
