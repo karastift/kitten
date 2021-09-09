@@ -1,5 +1,5 @@
 import json
-from termcolor import colored, cprint
+from termcolor import cprint
 
 
 class UtilPaw:
