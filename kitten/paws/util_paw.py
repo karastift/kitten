@@ -1,4 +1,6 @@
 import json
+from termcolor import colored, cprint
+
 
 class UtilPaw:
 
@@ -17,25 +19,51 @@ class UtilPaw:
     def __init__(self, options) -> None:
         self.options = options
 
-    def print_text(self, text: str='', verbose: bool=False, color: str='white', end: str='\n') -> None:
+    def print_text(
+        self,
+        text: str='',
+        verbose: bool=False,
+        color: str='white',
+        background_color: str=None,
+        end: str='\n',
+        attrs: list=[]
+    ) -> None:
         if verbose and not self.options['verbose']: return
 
-        if color == 'white': return print(text, end=end)
-        if color == 'green': return print(f'{self.GREEN}{text}{self.ENDC}', end=end)
-        if color == 'blue': return print(f'{self.BLUE}{text}{self.ENDC}', end=end)
-        if color == 'cyan': return print(f'{self.CYAN}{text}{self.ENDC}', end=end)
-        if color == 'red': return print(f'{self.RED}{text}{self.ENDC}', end=end)
-        if color == 'bold': return print(f'{self.BOLD}{text}{self.ENDC}', end=end)
+        background_color = 'on_' + background_color if background_color != None else None
 
-        raise f'Unsupported color "{color}"'
+        cprint(text=text, color=color, on_color=background_color, attrs=attrs, end=end)
 
     def print_prolog(self) -> None:
-        self.print_text('kitten', end='\t', color='bold')
-        self.print_text('beta', end='\n', color='green')
+        self.print_text('kitten', end='\t', attrs=['bold'])
+        self.print_text('beta', end='\t', color='green')
         self.print_text('( https://github.com/karastift/kitten.git )')
+
+    def print_scan_info(self):
+        target = self.options['target']
+        max_processes = self.options['maxprocesses']
+
+        self.print_text(f'''{self.ENDC}
+scan options:
+| target:
+|    {self.BOLD}{target}{self.ENDC}
+| max number of processes:
+|    {self.BOLD}{max_processes}{self.ENDC}
+ ‾‾‾
+'''     )
+    
+    def print_scan_results(self, scan_results: dict):
+        self.print_text(f'''{self.ENDC}
+scan results:
+| ports:''')
+
+        for port in scan_results.keys():
+            self.print_text(f'''{self.ENDC}|    {self.BOLD}{port} -> {scan_results[port]}{self.ENDC}''')
+
+        self.print_text(f'{self.ENDC} ‾‾‾')
     
     def get_most_common_ports(self) -> list:
-        f = open('./data/port_data.json', 'r')
+        f = open('./kitten/data/port_data.json', 'r')
         data = json.load(f)
             
         return data['most_common_ports']
