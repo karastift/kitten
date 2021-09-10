@@ -1,13 +1,19 @@
 from multiprocessing.dummy import Pool
-from scapy.all import (Dot11Beacon, Dot11, Dot11Elt, sniff)
 import threading
 import socket
 from time import sleep
 from paws.util_paw import UtilPaw
+# from scapy.all import (Dot11Beacon, Dot11, Dot11Elt, sniff)
 
 class ScanPaw:
 
     _util_paw = None
+
+    # scapy imports
+    Dot11Beacon = None
+    Dot11 = None
+    Dot11Elt = None
+    sniff = None
 
     # port scanning
     _target = None
@@ -20,6 +26,7 @@ class ScanPaw:
     _prev_length = 0
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
+        self.__init_scapy_util()
         self._util_paw = util_paw
 
         method = options['mthd']
@@ -30,6 +37,13 @@ class ScanPaw:
         
         elif method == 'networks':
             self.__set_interface(options['interface'])
+
+    def __init_scapy_util(self):
+        scapy_all = __import__('scapy.all', fromlist=['Dot11Beacon', 'Dot11', 'Dot11Elt', 'sniff'])
+        self.Dot11 = scapy_all.Dot11
+        self.Dot11Beacon = scapy_all.Dot11Beacon
+        self.Dot11Elt = scapy_all.Dot11Elt
+        self.sniff = scapy_all.sniff
 
     def __set_target(self, target: str) -> None:
         try:
@@ -110,21 +124,21 @@ class ScanPaw:
         self._interface = interface
 
     def __handle_packet(self, packet):
-        if packet.haslayer(Dot11Beacon):
+        if packet.haslayer(self.Dot11Beacon):
             
-            bssid = packet[Dot11].addr2
+            bssid = packet[self.Dot11].addr2
             
             try:
-                ssid = packet[Dot11Elt].info.decode()
+                ssid = packet[self.Dot11Elt].info.decode()
             except UnicodeDecodeError:
-                ssid = packet[Dot11Elt].info
+                ssid = packet[self.Dot11Elt].info
             
             try:
                 dbm_signal = packet.dBm_AntSignal
             except:
                 dbm_signal = "N/A"
             
-            stats = packet[Dot11Beacon].network_stats()
+            stats = packet[self.Dot11Beacon].network_stats()
             
             channel = stats.get("channel")
             
@@ -143,7 +157,7 @@ class ScanPaw:
 
     def get_wireless_networks(self):
         try:
-            sniff(prn=self.__handle_packet, iface=self._interface)
+            self.sniff(prn=self.__handle_packet, iface=self._interface)
         except KeyboardInterrupt:
             return self._networks_found
         
