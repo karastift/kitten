@@ -1,4 +1,5 @@
 import argparse
+from os import register_at_fork
 
 class ArgPaw:
 
@@ -40,6 +41,33 @@ class ArgPaw:
     def __configure_scan_parser(self, subparsers: argparse._SubParsersAction):
         scan_parser = subparsers.add_parser(
             name='scan',
+            help='Scan a target.'
+        )
+
+        subparsers = scan_parser.add_subparsers(
+            metavar='method',
+            dest='mthd',
+            required=True,
+        )
+
+        self.__configure_port_scan_parser(subparsers)
+        self.__configure_networks_scan_parser(subparsers)
+
+    def __configure_networks_scan_parser(self, subparsers: argparse._SubParsersAction):
+        scan_parser = subparsers.add_parser(
+            name='networks',
+            help='Scan for wireless networks.'
+        )
+        scan_parser.add_argument(
+            '-i', '--interface',
+            type=str,
+            required=True,
+            help='The network interface which is used to sniff (it has to support monitor mode).',
+        )
+
+    def __configure_port_scan_parser(self, subparsers: argparse._SubParsersAction):
+        scan_parser = subparsers.add_parser(
+            name='ports',
             help='Scan a target for open ports.'
         )
         scan_parser.add_argument(
