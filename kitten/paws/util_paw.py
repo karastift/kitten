@@ -58,6 +58,9 @@ scan options:
 scan results:
 | ports:''')
 
+        if len(scan_results.keys()) == 0:
+            return self.print_text(f'''{self.ENDC}|   {self.BOLD}No open ports discovered.{self.ENDC}''')
+
         for port in scan_results.keys():
             self.print_text(f'''{self.ENDC}|    {self.BOLD}{port} -> {scan_results[port]}{self.ENDC}''')
 
