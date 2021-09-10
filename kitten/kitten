@@ -3,6 +3,22 @@ from paws.arg_paw import ArgPaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
+# if no ports open, dont print ports
+
+# get operating system on scan
+# https://www.linux.org/threads/nmap-os-detection.4564/
+# https://nmap.org/man/de/man-os-detection.html
+# https://nmap.org/book/nmap-os-db.html
+# https://svn.nmap.org/nmap/nmap-os-db (actual db)
+
+# basic attacking / testing
+# -> if a ssh port is found, recommend to test it
+# -> test most common passwords + users (maybe based on operating system)
+
+# scan for clients on network
+
+# deauth network/dos
+# https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
 
 class Kitten:
 
