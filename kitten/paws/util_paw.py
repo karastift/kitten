@@ -7,6 +7,8 @@ class UtilPaw:
 
     options = None
 
+    verbose = None
+
     HEADER = '\033[95m'
     BLUE = '\033[94m'
     CYAN = '\033[96m'
@@ -18,7 +20,13 @@ class UtilPaw:
     UNDERLINE = '\033[4m'
 
     def __init__(self, options) -> None:
+
         self.options = options
+
+        self.__set_verbose(options['verbose'])
+
+    def __set_verbose(self, verbose: bool) -> None:
+        self.verbose = verbose
 
     def print_text(
         self,
@@ -29,7 +37,7 @@ class UtilPaw:
         end: str='\n',
         attrs: list=[]
     ) -> None:
-        if verbose and not self.options['verbose']: return
+        if verbose and not self.verbose: return
 
         background_color = 'on_' + background_color if background_color != None else None
 
@@ -40,7 +48,7 @@ class UtilPaw:
         self.print_text('beta', end='\t', color='green')
         self.print_text('( https://github.com/karastift/kitten.git )')
 
-    def print_scan_info(self):
+    def print_scan_info(self) -> None:
         target = self.options['target']
         max_processes = self.options['maxprocesses']
 
@@ -53,16 +61,16 @@ scan options:
  ‾‾‾
 '''     )
     
-    def print_scan_results(self, scan_results: dict):
+    def print_scan_results(self, scan_results: dict) -> None:
         self.print_text(f'''{self.ENDC}
 scan results:
 | ports:''')
 
         if len(scan_results.keys()) == 0:
-            return self.print_text(f'''{self.ENDC}|   {self.BOLD}No open ports discovered.{self.ENDC}''')
-
-        for port in scan_results.keys():
-            self.print_text(f'''{self.ENDC}|    {self.BOLD}{port} -> {scan_results[port]}{self.ENDC}''')
+            self.print_text(f'''{self.ENDC}|   {self.BOLD}No open ports discovered.{self.ENDC}''')
+        else:
+            for port in scan_results.keys():
+                self.print_text(f'''{self.ENDC}|    {self.BOLD}{port} -> {scan_results[port]}{self.ENDC}''')
 
         self.print_text(f'{self.ENDC} ‾‾‾')
     
