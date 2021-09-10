@@ -11,10 +11,28 @@ class ScanPaw:
     options = None
 
     target = None
+    maxprocesses = None
+    maxthreads = None
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
-        self.options = options
         self.util_paw = util_paw
+
+        self.__set_target(options['target'])
+        self.__set_maxprocesses(options['maxprocesses'])
+        self.__set_maxthreads(options['maxthreads'])
+
+    def __set_target(self, target: str) -> None:
+        try:
+            self.target = socket.gethostbyname(target)
+        except socket.gaierror:
+            self.util_paw.print_text('Hostname could not be resolved.', color='red')
+            exit()
+
+    def __set_maxthreads(self, maxthreads: int) -> None:
+        self.maxthreads = maxthreads
+
+    def __set_maxprocesses(self, maxprocesses: int) -> None:
+        self.maxprocesses = maxprocesses
 
     def is_open_port(self, port: int) -> bool:
 
@@ -32,7 +50,7 @@ class ScanPaw:
         return None
 
 
-    def get_services(self, ports: list):
+    def get_services(self, ports: list) -> dict:
         services = dict.fromkeys(ports, 'unknown')
         for port in ports:
             try:
@@ -42,18 +60,9 @@ class ScanPaw:
         
         return services
 
-    def set_target(self, target: str):
-        try:
-            self.target = socket.gethostbyname(target)
-        except socket.gaierror:
-            self.util_paw.print_text('Hostname could not be resolved.', color='red')
-            exit()
-
     def get_open_ports_multiprocessing(self) -> list:
         try:
-            self.set_target(self.options['target'])
-
-            with Pool(self.options['maxprocesses']) as p:
+            with Pool(self.maxprocesses) as p:
                 return list(filter(None, p.map(self.is_open_port, self.util_paw.get_most_common_ports())))
 
         except socket.error:
@@ -65,17 +74,13 @@ class ScanPaw:
         open_ports = []
         most_common_ports = self.util_paw.get_most_common_ports()
 
-
         try:
-
-            self.set_target(self.options['target'])
-            
-            def append_port_if_open(port: int):
+            def append_port_if_open(port: int) -> None:
                 if self.is_open_port(port) != None: open_ports.append(port)
 
             while len(most_common_ports) != 0:
                 port = most_common_ports[0]
-                if threading.active_count() >= self.options['maxthreads']:
+                if threading.active_count() >= self.maxthreads:
                     sleep(0.1)
                 else:
                     t = threading.Thread(target=append_port_if_open, args=[port])
