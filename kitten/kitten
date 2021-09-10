@@ -28,18 +28,25 @@ class Kitten:
     util_paw = None
     scan_paw = None
 
+    command = None
+
     options = {}
 
     def __init__(self) -> None:
         self.arg_paw = ArgPaw()
 
         self.options = self.arg_paw.get_options()
-        
+
+        self.__set_command(self.options['cmd'])
+
         self.util_paw = UtilPaw(self.options)
         self.scan_paw = ScanPaw(self.options, self.util_paw)
 
         self.util_paw.print_prolog()
         self.handle_command()
+
+    def __set_command(self, command : str):
+        self.command = command
         
     def handle_command(self):
         command = self.options['cmd']
