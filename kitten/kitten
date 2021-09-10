@@ -20,6 +20,9 @@ from paws.scan_paw import ScanPaw
 # scan for clients on network
 
 # deauth network/dos
+# get mac from ip:
+# https://stackoverflow.com/a/1750907/16546629
+# deauth:
 # https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
 
 class Kitten:
