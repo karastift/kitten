@@ -6,16 +6,14 @@ from paws.util_paw import UtilPaw
 
 class ScanPaw:
 
-    util_paw = None
+    _util_paw = None
 
-    options = None
-
-    target = None
-    maxprocesses = None
-    maxthreads = None
+    _target = None
+    _maxprocesses = None
+    _maxthreads = None
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
-        self.util_paw = util_paw
+        self._util_paw = util_paw
 
         self.__set_target(options['target'])
         self.__set_maxprocesses(options['maxprocesses'])
@@ -23,26 +21,26 @@ class ScanPaw:
 
     def __set_target(self, target: str) -> None:
         try:
-            self.target = socket.gethostbyname(target)
+            self._target = socket.gethostbyname(target)
         except socket.gaierror:
-            self.util_paw.print_text('Hostname could not be resolved.', color='red')
+            self._util_paw.print_text('Hostname could not be resolved.', color='red')
             exit()
 
     def __set_maxthreads(self, maxthreads: int) -> None:
-        self.maxthreads = maxthreads
+        self._maxthreads = maxthreads
 
     def __set_maxprocesses(self, maxprocesses: int) -> None:
-        self.maxprocesses = maxprocesses
+        self._maxprocesses = maxprocesses
 
     def is_open_port(self, port: int) -> bool:
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(1)
         
-        result = s.connect_ex((self.target, port))
+        result = s.connect_ex((self._target, port))
         if result == 0:
-            self.util_paw.print_text(f'Found open port: ', end='', verbose=True)
-            self.util_paw.print_text(port, color='cyan', verbose=True)
+            self._util_paw.print_text(f'Found open port: ', end='', verbose=True)
+            self._util_paw.print_text(port, color='cyan', verbose=True)
 
             return port
         
@@ -62,17 +60,17 @@ class ScanPaw:
 
     def get_open_ports_multiprocessing(self) -> list:
         try:
-            with Pool(self.maxprocesses) as p:
-                return list(filter(None, p.map(self.is_open_port, self.util_paw.get_most_common_ports())))
+            with Pool(self._maxprocesses) as p:
+                return list(filter(None, p.map(self.is_open_port, self._util_paw.get_most_common_ports())))
 
         except socket.error:
-            self.util_paw.print_text('Server does not respond.', color='red')
+            self._util_paw.print_text('Server does not respond.', color='red')
             exit()
 
     def get_open_ports_threading(self) -> list:
 
         open_ports = []
-        most_common_ports = self.util_paw.get_most_common_ports()
+        most_common_ports = self._util_paw.get_most_common_ports()
 
         try:
             def append_port_if_open(port: int) -> None:
@@ -80,7 +78,7 @@ class ScanPaw:
 
             while len(most_common_ports) != 0:
                 port = most_common_ports[0]
-                if threading.active_count() >= self.maxthreads:
+                if threading.active_count() >= self._maxthreads:
                     sleep(0.1)
                 else:
                     t = threading.Thread(target=append_port_if_open, args=[port])
@@ -91,7 +89,7 @@ class ScanPaw:
                 sleep(1)
 
         except socket.error:
-            self.util_paw.print_text('Server does not respond.', color='red')
+            self._util_paw.print_text('Server does not respond.', color='red')
             exit()
 
         return open_ports
