@@ -5,8 +5,6 @@ from paws.scan_paw import ScanPaw
 
 # https://realpython.com/python-testing/
 
-# if no ports open, dont print ports
-
 # get operating system on scan
 # https://www.linux.org/threads/nmap-os-detection.4564/
 # https://nmap.org/man/de/man-os-detection.html
