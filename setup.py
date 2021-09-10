@@ -5,7 +5,7 @@ setup(
     version='0.1',
     url='https://github.com/karastift/kitten.git',
     author='kara',
-    install_requires=['argparse'],
+    install_requires=['argparse', 'scapy'],
     scripts=['kitten/kitten'],
     classifiers=[
         'Development Status :: 3 - Alpha',

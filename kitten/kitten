@@ -17,9 +17,9 @@ from paws.scan_paw import ScanPaw
 
 # scan for clients on network
 
-# deauth network/dos
-# get mac from ip:
-# https://stackoverflow.com/a/1750907/16546629
+# arg to put device in monitor mode and disable it afterwards
+# input option (y/n) to put device in mon mode if it isnt (and managed again afterwards)
+
 # deauth:
 # https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
 
@@ -51,12 +51,19 @@ class Kitten:
         
     def handle_command(self):
         command = self.options['cmd']
+        method = self.options['mthd']
 
         if command == 'scan':
-            self.util_paw.print_scan_info()
-            open_ports = self.scan_paw.get_open_ports_multiprocessing()
-            services = self.scan_paw.get_services(open_ports)
-            self.util_paw.print_scan_results(services)
+
+            if method == 'ports':
+                self.util_paw.print_port_scan_info()
+                open_ports = self.scan_paw.get_open_ports_multiprocessing()
+                services = self.scan_paw.get_services(open_ports)
+                self.util_paw.print_port_scan_results(services)
+
+            elif method == 'networks':
+                self.util_paw.print_networks_scan_info()
+                self.scan_paw.get_wireless_networks()
 
 def main():
     try:
