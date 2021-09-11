@@ -64,6 +64,12 @@ class ArgPaw:
             required=True,
             help='The network interface which is used to sniff (it has to support monitor mode).',
         )
+        scan_parser.add_argument(
+            '-am' '--automode',
+            dest='automode',
+            action='store_true',
+            help='The selected interface is automatically put into the required mode.',
+        )
 
     def __configure_port_scan_parser(self, subparsers: argparse._SubParsersAction):
         scan_parser = subparsers.add_parser(
