@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='kitten',
@@ -13,9 +13,10 @@ setup(
             'kitten=kitten:main',
         ]
     },
-    packages=['data', 'paws'],
+    packages=find_packages(where='kitten') + ['data'],
+    package_dir={'': 'kitten'},
     package_data={
-        'data': ['port_data.json'],
+        '': ['port_data.json'],
     },
     include_package_data=True,
     
