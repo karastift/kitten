@@ -26,7 +26,6 @@ class ScanPaw:
     _prev_length = 0
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
-        self.__init_scapy_util()
         self._util_paw = util_paw
 
         method = options['mthd']
@@ -36,6 +35,7 @@ class ScanPaw:
             self.__set_maxthreads(options['maxthreads'])
         
         elif method == 'networks':
+            self.__init_scapy_util()
             self.__set_interface(options['interface'])
 
     def __init_scapy_util(self):
