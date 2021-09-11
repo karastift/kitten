@@ -5,8 +5,18 @@ setup(
     version='0.1',
     url='https://github.com/karastift/kitten.git',
     author='kara',
-    install_requires=['argparse', 'scapy'],
-    scripts=['kitten/kitten'],
+    install_requires=['argparse', 'scapy', 'termcolor'],
+    
+    py_modules=['kitten'],
+    entry_points={
+        'console_scripts': [
+            'kitten=kitten:main',
+        ]
+    },
+    packages=['paws'],
+    package_data={
+        'sample': ['port_data.json'],
+    },
     classifiers=[
         'Development Status :: 3 - Alpha',
 
@@ -17,10 +27,5 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    package_dir={'': 'kitten'},
-    packages=find_packages(where='kitten'),
     python_requires='>=3.6, <4',
-    package_data={
-        'sample': ['port_data.json'],
-    },
 )
