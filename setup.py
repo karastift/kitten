@@ -13,10 +13,12 @@ setup(
             'kitten=kitten:main',
         ]
     },
-    packages=['paws'],
+    packages=['data', 'paws'],
     package_data={
-        'sample': ['port_data.json'],
+        'data': ['port_data.json'],
     },
+    include_package_data=True,
+    
     classifiers=[
         'Development Status :: 3 - Alpha',
 

@@ -88,13 +88,13 @@ class ScanPaw:
         return services
 
     def get_open_ports_multiprocessing(self) -> list:
-        try:
+        # try:
             with Pool(self._maxprocesses) as p:
                 return list(filter(None, p.map(self.is_open_port, self._util_paw.get_most_common_ports())))
 
-        except socket.error:
-            self._util_paw.print_text('Server does not respond.', color='red', attrs=['bold'])
-            exit()
+        # except socket.error:
+        #     self._util_paw.print_text('Server does not respond.', color='red', attrs=['bold'])
+        #     exit()
 
     def get_open_ports_threading(self) -> list:
 
