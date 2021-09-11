@@ -90,7 +90,7 @@ class ScanPaw:
                 return list(filter(None, p.map(self.is_open_port, self._util_paw.get_most_common_ports())))
 
         except socket.error:
-            self._util_paw.print_text('Server does not respond.', color='red')
+            self._util_paw.print_text('Server does not respond.', color='red', attrs=['bold'])
             exit()
 
     def get_open_ports_threading(self) -> list:
@@ -115,7 +115,7 @@ class ScanPaw:
                 sleep(1)
 
         except socket.error:
-            self._util_paw.print_text('Server does not respond.', color='red')
+            self._util_paw.print_text('Server does not respond.', color='red', attrs=['bold'])
             exit()
 
         return open_ports
@@ -136,13 +136,13 @@ class ScanPaw:
             try:
                 dbm_signal = packet.dBm_AntSignal
             except:
-                dbm_signal = "N/A"
+                dbm_signal = 'N/A'
             
             stats = packet[self.Dot11Beacon].network_stats()
             
-            channel = stats.get("channel")
+            channel = stats.get('channel')
             
-            crypto = stats.get("crypto")
+            crypto = stats.get('crypto')
 
             if bssid not in self._networks_found.keys():
                 self._networks_found[bssid] = {
