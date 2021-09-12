@@ -25,7 +25,7 @@ class ScanPaw:
     _networks_found = {}
     _prev_length = 0
     _automode = None
-    _prev_mode = None
+    _prev_mode = 'monitor'
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
         self._util_paw = util_paw
@@ -221,8 +221,14 @@ class ScanPaw:
 
 
     def switch_interface_mode(self, mode: str):
-        assert mode in {'monitor', 'managed'}, 'Invalid mode.'
+        assert mode in {'monitor', 'managed'}, f'Invalid mode "{mode}"'
 
-        subprocess.Popen(f'sudo ifconfig {self._interface} down'.split(' ')).wait()
-        subprocess.Popen(f'sudo iwconfig {self._interface} mode {mode}'.split(' ')).wait()
-        subprocess.Popen(f'sudo ifconfig {self._interface} up'.split(' ')).wait()
+        try:
+            subprocess.Popen(f'ifconfig {self._interface} down'.split(' ')).wait()
+            subprocess.Popen(f'iwconfig {self._interface} mode {mode}'.split(' ')).wait()
+            subprocess.Popen(f'ifconfig {self._interface} up'.split(' ')).wait()
+
+        except PermissionError:
+            self.switch_interface_mode(self._prev_mode)
+            self._util_paw.print_permission_error()
+            exit()
