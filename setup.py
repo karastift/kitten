@@ -5,7 +5,7 @@ setup(
     version='0.1',
     url='https://github.com/karastift/kitten.git',
     author='kara',
-    install_requires=['argparse', 'scapy', 'termcolor'],
+    install_requires=['argparse', 'scapy'],
     
     py_modules=['kitten'],
     entry_points={
