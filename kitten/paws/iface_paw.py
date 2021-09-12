@@ -1,8 +1,11 @@
 import subprocess
+from types import prepare_class
 
 from paws.util_paw import UtilPaw
 
 class IfacePaw:
+
+    options = None
 
     _util_paw = None
     
@@ -10,7 +13,8 @@ class IfacePaw:
     _automode = None
     _prev_mode = 'monitor'
 
-    def __init__(self, util_paw: UtilPaw) -> None:
+    def __init__(self, options, util_paw: UtilPaw) -> None:
+        self.options = options
         self._util_paw = util_paw
 
     def set_automode(self, automode: bool):
@@ -25,9 +29,9 @@ class IfacePaw:
             self._prev_mode = interface['mode']
             self.switch_interface_mode('monitor')
         
-        elif interface['mode'] != 'monitor':
-            self._util_paw.print_text('Your interface must be in monitor mode. Set the \'-am\' (automode) flag to change the mode when kitten runs.', color='red', attrs=['bold'])
-            exit()
+        if not self._automode and interface['mode'] == 'managed':
+            self._util_paw.print_text('Your interface is in managed mode. Some scans require monitor mode. So if you get no results that could be the reason. Set the -am flag to automatically change the mode into the required one.', color='yellow', attrs=['bold'])
+        
 
     def get_interface(self, name: str):
         interfaces = self.get_interfaces()
@@ -70,11 +74,19 @@ class IfacePaw:
         assert mode in {'monitor', 'managed'}, f'Invalid mode "{mode}"'
 
         try:
-            subprocess.Popen(f'ifconfig {self._interface} down'.split(' ')).wait()
+            process = subprocess.Popen(f'ifconfig {self._interface} down'.split(' '))
+            code = process.wait()
+
+            if code == 255:
+                process.kill()
+                raise PermissionError
+
+
             subprocess.Popen(f'iwconfig {self._interface} mode {mode}'.split(' ')).wait()
             subprocess.Popen(f'ifconfig {self._interface} up'.split(' ')).wait()
 
+            self._util_paw.print_text(f'\nPut {self._interface} into {mode} mode.', end='\n\n', color='white', attrs=['bold'])
+
         except PermissionError:
-            self.switch_interface_mode(self._prev_mode)
             self._util_paw.print_permission_error()
             exit()

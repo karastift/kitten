@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from paws.arg_paw import ArgPaw
+from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
@@ -34,6 +35,7 @@ class Kitten:
     arg_paw = None
     util_paw = None
     scan_paw = None
+    iface_paw = None
 
     command = None
 
@@ -48,6 +50,7 @@ class Kitten:
 
         self.util_paw = UtilPaw(self.options)
         self.scan_paw = ScanPaw(self.options, self.util_paw)
+        self.iface_paw = IfacePaw(self.options, self.util_paw)
 
         self.util_paw.print_prolog()
         self.handle_command()
@@ -70,6 +73,12 @@ class Kitten:
             elif method == 'networks':
                 self.util_paw.print_networks_scan_info()
                 self.scan_paw.get_wireless_networks()
+        
+        elif command == 'iface':
+
+            if method == 'mode':
+                self.iface_paw.set_interface(self.options['interface'])
+                self.iface_paw.switch_interface_mode(self.options['mode'])
 
 def main():
     try:
