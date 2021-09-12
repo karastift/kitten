@@ -6,6 +6,7 @@ Kitten is a free and open-source network scanner.
 
 - Scan a target for open ports
 - Scan for wireless networks in your area
+- Configure your network interfaces
 - ~Meow~
 ## Demo
 
