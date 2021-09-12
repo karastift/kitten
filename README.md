@@ -23,8 +23,13 @@ Install kitten with git and pip:
 
 ## Usage
 
+##### As user:
 ```
 kitten [-h] [-v] [command] [method] [method-args]
+```
+##### As root (is required for some commands or methods):
+```
+sudo python3 -m kitten [-h] [-v] [command] [method] [method-args]
 ```
 ### Optional arguments:
 ```
