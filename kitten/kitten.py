@@ -3,6 +3,8 @@ from paws.arg_paw import ArgPaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
+# termcolor entfernen !!!!!!!!!!!!!!!!!
+
 # https://realpython.com/python-testing/
 
 # get operating system on scan
