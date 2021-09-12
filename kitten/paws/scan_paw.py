@@ -37,7 +37,7 @@ class ScanPaw(IfacePaw):
         elif method == 'networks':
             self.set_automode(options['automode'])
             self.set_interface(options['interface'])
-            super().__init__(self._util_paw)
+            super().__init__(options, self._util_paw)
             self.__init_scapy_util()
 
     def __init_scapy_util(self):

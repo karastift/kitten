@@ -1,5 +1,6 @@
 import argparse
 from os import register_at_fork
+import subprocess
 
 class ArgPaw:
 
@@ -34,9 +35,41 @@ class ArgPaw:
         )
 
         self.__configure_scan_parser(subparsers)
+        self.__configure_iface_parser(subparsers)
 
 
         return kitten_parser
+
+    def __configure_iface_parser(self, subparsers: argparse._SubParsersAction):
+        iface_parser = subparsers.add_parser(
+            name='iface',
+            help='Configure your network interface.',
+        )
+
+        subparsers = iface_parser.add_subparsers(
+            metavar='method',
+            dest='mthd',
+            required=True,
+        )
+
+        self.__configure_iface_mode_parser(subparsers)
+
+    def __configure_iface_mode_parser(self, subparsers: argparse._SubParsersAction):
+        mode_parser = subparsers.add_parser(
+            name='mode',
+            help='Configure the mode of your network interface.',
+        )
+        mode_parser.add_argument(
+            dest='interface',
+            type=str,
+            help='Define the interface to configure.',
+        )
+        mode_parser.add_argument(
+            dest='mode',
+            type=str,
+            help='The mode your interface will be put in.',
+            choices=['managed', 'monitor']
+        )
     
     def __configure_scan_parser(self, subparsers: argparse._SubParsersAction):
         scan_parser = subparsers.add_parser(
