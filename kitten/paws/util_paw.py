@@ -1,6 +1,5 @@
 import json
 import os
-from termcolor import cprint
 
 class UtilPaw:
 
@@ -17,6 +16,15 @@ class UtilPaw:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+    colors_dict = {
+        'blue': BLUE,
+        'cyan': CYAN,
+        'green': GREEN,
+        'yellow': WARNING,
+        'red': RED,
+        'white': '',
+    }
 
     def __init__(self, options) -> None:
 
@@ -40,7 +48,12 @@ class UtilPaw:
 
         background_color = 'on_' + background_color if background_color != None else None
 
-        cprint(text=text, color=color, on_color=background_color, attrs=attrs, end=end)
+        assert color in self.colors_dict.keys(), f'Unsupported color: {color}'
+
+        if 'bold' in attrs:
+            print(f'{self.ENDC}{self.BOLD}{self.colors_dict[color]}{text}{self.ENDC}', end=end)
+        else:
+            print(f'{self.ENDC}{self.colors_dict[color]}{text}{self.ENDC}', end=end)
 
     def print_prolog(self) -> None:
         self.print_text('kitten', end='\t', attrs=['bold'])
