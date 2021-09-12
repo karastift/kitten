@@ -25,6 +25,10 @@ from paws.scan_paw import ScanPaw
 # deauth:
 # https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
 
+# evil twin maybe
+
+# configure network interface easy
+
 class Kitten:
 
     arg_paw = None

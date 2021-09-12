@@ -3,9 +3,10 @@ import subprocess
 import threading
 import socket
 from time import sleep
+from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 
-class ScanPaw:
+class ScanPaw(IfacePaw):
 
     _util_paw = None
 
@@ -21,11 +22,8 @@ class ScanPaw:
     _maxthreads = None
 
     # scanning for networks
-    _interface = None
     _networks_found = {}
     _prev_length = 0
-    _automode = None
-    _prev_mode = 'monitor'
 
     def __init__(self, options, util_paw: UtilPaw) -> None:
         self._util_paw = util_paw
@@ -37,8 +35,9 @@ class ScanPaw:
             self.__set_maxthreads(options['maxthreads'])
         
         elif method == 'networks':
-            self.__set_automode(options['automode'])
-            self.__set_interface(options['interface'])
+            self.set_automode(options['automode'])
+            self.set_interface(options['interface'])
+            super().__init__(self._util_paw)
             self.__init_scapy_util()
 
     def __init_scapy_util(self):
@@ -123,21 +122,7 @@ class ScanPaw:
 
         return open_ports
 
-    def __set_automode(self, automode: bool):
-        self._automode = automode
-    
-    def __set_interface(self, interface: str):
 
-        interface = self.get_interface(interface)
-        self._interface = interface['name']
-
-        if self._automode and interface['mode'] != 'monitor':
-            self._prev_mode = interface['mode']
-            self.switch_interface_mode('monitor')
-        
-        elif interface['mode'] != 'monitor':
-            self._util_paw.print_text('Your interface must be in monitor mode. Set the \'-am\' (automode) flag to change the mode when kitten runs.', color='red', attrs=['bold'])
-            exit()
 
 
     def __handle_packet(self, packet):
@@ -174,60 +159,13 @@ class ScanPaw:
 
     def get_wireless_networks(self):
         try:
-            self.sniff(prn=self.__handle_packet, iface=self._interface)
+            self.sniff(prn=self.__handle_packet, iface=self.get_selected_interface())
 
         except KeyboardInterrupt:
 
             self.switch_interface_mode(self._prev_mode)
             return self._networks_found
         
-        except PermissionError:
-            self.switch_interface_mode(self._prev_mode)
-            self._util_paw.print_permission_error()
-            exit()
-    
-    def get_interface(self, name: str):
-        interfaces = self.get_interfaces()
-        return next(iface for iface in interfaces if iface['name'] == name)
-
-        
-    def get_interfaces(self):
-        output = subprocess.getoutput('iwconfig').split('\n\n')
-
-        interfaces = []
-        
-        for line in output:
-            if 'no wireless' in line:
-                continue
-
-            name = ''
-            mode = ''
-
-            if '802' in line:
-                name = line.split(' ')[0]
-            
-            if 'Managed' in line:
-                mode = 'managed'
-
-            if 'Monitor' in line:
-                mode = 'monitor'
-
-            interfaces.append({
-                'name': name,
-                'mode': mode,
-            })
-        
-        return interfaces
-
-
-    def switch_interface_mode(self, mode: str):
-        assert mode in {'monitor', 'managed'}, f'Invalid mode "{mode}"'
-
-        try:
-            subprocess.Popen(f'ifconfig {self._interface} down'.split(' ')).wait()
-            subprocess.Popen(f'iwconfig {self._interface} mode {mode}'.split(' ')).wait()
-            subprocess.Popen(f'ifconfig {self._interface} up'.split(' ')).wait()
-
         except PermissionError:
             self.switch_interface_mode(self._prev_mode)
             self._util_paw.print_permission_error()
