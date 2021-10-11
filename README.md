@@ -42,7 +42,7 @@ sudo python3 -m kitten [-h] [-v] [command] [method] [method-args]
 kitten scan [-h] [method] [method-args]
 ```
 ##### Methods:
-* `ports [-h] [-mt MAXTHREADS] target`
+* `ports [-h] [-mt MAXTHREADS] [target]`
     * (`-h`) Show info about method.
     * (`-mt`) Max number of processes that will be opened at the same time.
     * (`target`) Define the target that is to be scanned.
@@ -50,6 +50,9 @@ kitten scan [-h] [method] [method-args]
     * (`-h`) Show info about method.
     * (`-i`) The network interface which is used to sniff (it has to support monitor mode).
     * (`-am`) The selected interface is automatically put into the required mode.
+* `iface [-h] [interface] [mode]`
+    * (`interface`) Name of the interface to configure.
+    * (`mode`) Mode to put the selected interface in (monitor/managed).
 ## Authors
 
 - [@kara](https://www.github.com/karastift)
