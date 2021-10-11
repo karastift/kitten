@@ -17,7 +17,6 @@ Kitten is a free and open-source network scanner.
 Install kitten with git and pip:
 
 ```bash
-  cd kitten
   python3 -m pip install "git+https://github.com/karastift/kitten.git"
 ```
 
