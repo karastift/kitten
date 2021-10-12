@@ -4,10 +4,6 @@ from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
 
-# termcolor entfernen !!!!!!!!!!!!!!!!!
-
-# https://realpython.com/python-testing/
-
 # get operating system on scan
 # https://www.linux.org/threads/nmap-os-detection.4564/
 # https://nmap.org/man/de/man-os-detection.html
@@ -20,15 +16,10 @@ from paws.scan_paw import ScanPaw
 
 # scan for clients on network
 
-# arg to put device in monitor mode and disable it afterwards
-# input option (y/n) to put device in mon mode if it isnt (and managed again afterwards)
-
 # deauth:
 # https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
 
 # evil twin maybe
-
-# configure network interface easy
 
 class Kitten:
 
