@@ -71,6 +71,12 @@ class Kitten:
                 self.iface_paw.set_interface(self.options['interface'])
                 self.iface_paw.switch_interface_mode(self.options['mode'])
 
+        elif command == 'attack':
+
+            if method == 'deauth':
+                # start deauth packet injection
+                pass
+
 def main():
     try:
         Kitten()
