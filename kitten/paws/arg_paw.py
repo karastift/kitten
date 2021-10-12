@@ -36,9 +36,39 @@ class ArgPaw:
 
         self.__configure_scan_parser(subparsers)
         self.__configure_iface_parser(subparsers)
-
+        self.__configure_attack_parser(subparsers)
 
         return kitten_parser
+
+    def __configure_attack_parser(self, subparsers: argparse._SubParsersAction):
+        attack_parser = subparsers.add_parser(
+            name='attack',
+            help='Attack a target.',
+        )
+        subparsers = attack_parser.add_subparsers(
+            metavar='method',
+            dest='mthd',
+            required=True,
+        )
+
+        self.__configure_attack_deauth_parser(subparsers)
+
+
+    def __configure_attack_deauth_parser(self, subparsers: argparse._SubParsersAction):
+        deauth_parser = subparsers.add_parser(
+            name='deauth',
+            help='Kick out devices from a network.',
+        )
+        deauth_parser.add_argument(
+            dest='bssid',
+            type=str,
+            help='BSSID of the targeted network.',
+        )
+        deauth_parser.add_argument(
+            dest='interface',
+            type=str,
+            help='Select the interface to use (has to support monitor mode).',
+        )
 
     def __configure_iface_parser(self, subparsers: argparse._SubParsersAction):
         iface_parser = subparsers.add_parser(
