@@ -80,7 +80,9 @@ class ScanPaw(IfacePaw):
             exit()
 
     def get_open_ports_threading(self) -> list:
-
+        """
+        @deprecated
+        """
         open_ports = []
         most_common_ports = self._util_paw.get_most_common_ports()
 
