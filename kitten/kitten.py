@@ -24,68 +24,86 @@ from paws.scan_paw import ScanPaw
 
 class Kitten:
 
-    arg_paw = None
-    util_paw = None
-    scan_paw = None
-    iface_paw = None
-    attack_paw = None
+    __arg_paw = None
+    __util_paw = None
+    __scan_paw = None
+    __iface_paw = None
+    __attack_paw = None
 
-    command = None
+    __command = None
 
-    options = {}
+    __options = {}
 
     def __init__(self) -> None:
-        self.arg_paw = ArgPaw()
+        self.__arg_paw = ArgPaw()
 
-        self.options = self.arg_paw.get_options()
+        self.__options = self.__arg_paw.get_options()
 
-        self.__set_command(self.options['cmd'])
+        self.__set_command(self.__options['cmd'])
 
-        self.util_paw = UtilPaw(self.options)
-        self.scan_paw = ScanPaw(self.options, self.util_paw)
-        self.iface_paw = IfacePaw(self.options, self.util_paw)
-        self.attack_paw = AttackPaw(self.util_paw)
+        self.__util_paw = UtilPaw(self.__options)
+        self.__scan_paw = ScanPaw(self.__options, self.__util_paw)
+        self.__iface_paw = IfacePaw(self.__options, self.__util_paw)
+        self.__attack_paw = AttackPaw(self.__util_paw)
 
-        self.util_paw.print_prolog()
-        self.handle_command()
+        self.__util_paw.set_verbose(self.__options['verbose'])
+        self.__util_paw.print_prolog()
 
-    def __set_command(self, command : str):
-        self.command = command
+        self.__set_command(self.__options['cmd'])
+        self.__set_method(self.__options['mthd'])
+        self.__handle_command()
+
+    def __set_command(self, command : str) -> None:
+        self.__command = command
+    
+    def __set_method(self, method: str) -> None:
+        self.__method = method
         
-    def handle_command(self):
-        command = self.options['cmd']
-        method = self.options['mthd']
+    def __handle_command(self) -> None:
 
-        if command == 'scan':
+        if self.__command == 'scan':
 
-            if method == 'ports':
-                self.util_paw.print_port_scan_info()
-                open_ports = self.scan_paw.get_open_ports_multiprocessing()
-                services = self.scan_paw.get_services(open_ports)
-                self.util_paw.print_port_scan_results(services)
+            if self.__method == 'ports':
+                self.__util_paw.print_port_scan_info()
 
-            elif method == 'networks':
-                self.util_paw.print_networks_scan_info()
-                self.scan_paw.get_wireless_networks()
+                self.__scan_paw.set_target(self.__options['target'])
+                self.__scan_paw.set_maxprocesses(self.__options['maxprocesses'])
+                self.__scan_paw.set_maxthreads(self.__options['maxthreads'])
+
+                open_ports = self.__scan_paw.get_open_ports_multiprocessing()
+                services = self.__scan_paw.get_services(open_ports)
+
+                self.__util_paw.print_port_scan_results(services)
+
+            elif self.__method == 'networks':
+                self.__scan_paw.set_interface(self.__options['interface'])
+                self.__scan_paw.set_automode(self.__options['automode'])
+
+                self.__util_paw.print_networks_scan_info()
+                self.__scan_paw.scan_for_wireless_networks()
         
-        elif command == 'iface':
+        elif self.__command == 'iface':
 
-            if method == 'mode':
-                self.iface_paw.set_interface(self.options['interface'])
-                self.iface_paw.switch_interface_mode(self.options['mode'])
+            if self.__method == 'mode':
+                self.__iface_paw.set_interface(self.__options['interface'])
+                self.__iface_paw.switch_interface_mode(self.__options['mode'])
 
-        elif command == 'attack':
-            self.attack_paw.set_verbose(self.options['verbose'])
+        elif self.__command == 'attack':
+            self.__attack_paw.set_verbose(self.__options['verbose'])
 
-            if method == 'deauth':
-                self.attack_paw.set_target_network_mac(self.options['network_mac'])
-                self.attack_paw.set_target_mac(self.options['target'])
-                self.attack_paw.set_interface(self.options['interface'])
-                self.attack_paw.set_interval(self.options['interval'])
-                self.attack_paw.set_count(self.options['count'])
+            if self.__method == 'deauth':
+                self.__util_paw.print_attack_deauth_info()
 
-                self.attack_paw.deauth()
-def main():
+                self.__attack_paw.set_target_network_mac(self.__options['network_mac'])
+                self.__attack_paw.set_target_mac(self.__options['target'])
+                self.__attack_paw.set_interface(self.__options['interface'])
+                self.__attack_paw.set_interval(self.__options['interval'])
+                self.__attack_paw.set_count(self.__options['count'])
+
+                self.__attack_paw.deauth()
+
+
+def main() -> None:
     try:
         Kitten()
     except KeyboardInterrupt:

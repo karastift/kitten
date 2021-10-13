@@ -3,9 +3,9 @@ import os
 
 class UtilPaw:
 
-    options = None
+    __options = None
 
-    verbose = None
+    __verbose = None
 
     ENDC = '\033[0m'
     BOLD = '\033[1m'
@@ -22,13 +22,17 @@ class UtilPaw:
     }
 
     def __init__(self, options) -> None:
+        self.__options = options
 
-        self.options = options
-
-        self.__set_verbose(options['verbose'])
-
-    def __set_verbose(self, verbose: bool) -> None:
-        self.verbose = verbose
+    def set_verbose(self, verbose: bool) -> None:
+        self.__verbose = verbose
+    
+    def get_most_common_ports(self) -> list:
+        path = os.path.join(os.path.dirname(__file__), '../data/port_data.json')
+        f = open(path, 'r')
+        data = json.load(f)
+            
+        return data['most_common_ports']
 
     def print_text(
         self,
@@ -39,7 +43,7 @@ class UtilPaw:
         end: str='\n',
         attrs: list=[]
     ) -> None:
-        if verbose and not self.verbose: return
+        if verbose and not self.__verbose: return
 
         background_color = 'on_' + background_color if background_color != None else None
 
@@ -56,8 +60,8 @@ class UtilPaw:
         self.print_text('( https://github.com/karastift/kitten.git )')
 
     def print_port_scan_info(self) -> None:
-        target = self.options['target']
-        max_processes = self.options['maxprocesses']
+        target = self.__options['target']
+        max_processes = self.__options['maxprocesses']
 
         self.print_text(f'''{self.ENDC}
 scan options:
@@ -71,11 +75,11 @@ scan options:
 '''     )
 
     def print_attack_deauth_info(self) -> None:
-        target_network_mac = self.options['network_mac']
-        interface = self.options['interface']
-        target_mac = self.options['target']
-        interval = self.options['interval']
-        count = self.options['count']
+        target_network_mac = self.__options['network_mac']
+        interface = self.__options['interface']
+        target_mac = self.__options['target']
+        interval = self.__options['interval']
+        count = self.__options['count']
 
         self.print_text(f'''{self.ENDC}
 attack options:
@@ -107,8 +111,8 @@ scan results:
 
         self.print_text(f'{self.ENDC} ‾‾‾')
 
-    def print_networks_scan_info(self):
-        target = self.options['interface']
+    def print_networks_scan_info(self) -> None:
+        target = self.__options['interface']
 
         self.print_text(f'''{self.ENDC}
 scan options:
@@ -123,16 +127,9 @@ scan results:
 |    {self.BOLD}BSSID\t\t\tDBMSIGNAL\tCHANNEL\t\tCRYPTO\t\tSSID{self.ENDC}
 |''')
 
-    def print_scanned_network(self, network: dict):
+    def print_scanned_network(self, network: dict) -> None:
         last_tab_space = '\t' if len(network['crypto']) >= 8 else '\t\t'
         self.print_text(f'''{self.ENDC}|    {self.BOLD}{network['bssid']}\t\t{network['dbm_signal']}\t\t{network['channel']}\t\t{network['crypto']}{last_tab_space}{network['ssid']}{self.ENDC}''')
 
     def print_permission_error(self):
         self.print_text('Not enough permissions. Please restart with sudo.', color='red', attrs=['bold'])
-    
-    def get_most_common_ports(self) -> list:
-        path = os.path.join(os.path.dirname(__file__), '../data/port_data.json')
-        f = open(path, 'r')
-        data = json.load(f)
-            
-        return data['most_common_ports']

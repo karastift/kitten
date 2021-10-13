@@ -4,14 +4,11 @@ import subprocess
 
 class ArgPaw:
 
-    options = None
-
-    kitten_parser = None
-    scan_parser = None
+    __options = None
 
     def __init__(self) -> None:
-        self.kitten_parser = self.__create_parsers()
-        self.options = self.kitten_parser.parse_args().__dict__
+        kitten_parser = self.__create_parsers()
+        self.__options = kitten_parser.parse_args().__dict__
 
     def __create_parsers(self) -> argparse.ArgumentParser:
 
@@ -40,7 +37,7 @@ class ArgPaw:
 
         return kitten_parser
 
-    def __configure_attack_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_attack_parser(self, subparsers: argparse._SubParsersAction) -> None:
         attack_parser = subparsers.add_parser(
             name='attack',
             help='Attack a target.',
@@ -54,7 +51,7 @@ class ArgPaw:
         self.__configure_attack_deauth_parser(subparsers)
 
 
-    def __configure_attack_deauth_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_attack_deauth_parser(self, subparsers: argparse._SubParsersAction) -> None:
         deauth_parser = subparsers.add_parser(
             name='deauth',
             help='Kick out devices from a network.',
@@ -91,7 +88,7 @@ class ArgPaw:
             help='Change number of packets to send. If undefined or zero count is infinite.',
         )
 
-    def __configure_iface_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_iface_parser(self, subparsers: argparse._SubParsersAction) -> None:
         iface_parser = subparsers.add_parser(
             name='iface',
             help='Configure your network interface.',
@@ -105,7 +102,7 @@ class ArgPaw:
 
         self.__configure_iface_mode_parser(subparsers)
 
-    def __configure_iface_mode_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_iface_mode_parser(self, subparsers: argparse._SubParsersAction) -> None:
         mode_parser = subparsers.add_parser(
             name='mode',
             help='Configure the mode of your network interface.',
@@ -122,7 +119,7 @@ class ArgPaw:
             choices=['managed', 'monitor']
         )
     
-    def __configure_scan_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_scan_parser(self, subparsers: argparse._SubParsersAction) -> None:
         scan_parser = subparsers.add_parser(
             name='scan',
             help='Scan a target.'
@@ -137,7 +134,7 @@ class ArgPaw:
         self.__configure_port_scan_parser(subparsers)
         self.__configure_networks_scan_parser(subparsers)
 
-    def __configure_networks_scan_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_networks_scan_parser(self, subparsers: argparse._SubParsersAction) -> None:
         scan_parser = subparsers.add_parser(
             name='networks',
             help='Scan for wireless networks.'
@@ -154,7 +151,7 @@ class ArgPaw:
             help='The selected interface is automatically put into the required mode.',
         )
 
-    def __configure_port_scan_parser(self, subparsers: argparse._SubParsersAction):
+    def __configure_port_scan_parser(self, subparsers: argparse._SubParsersAction) -> None:
         scan_parser = subparsers.add_parser(
             name='ports',
             help='Scan a target for open ports.'
@@ -177,12 +174,12 @@ class ArgPaw:
             help='Max number of processes that will be opened at the same time.',
         )
     
-    def __add_costum_help_arg(self, parser: argparse.ArgumentParser):
+    def __add_costum_help_arg(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             '-h', '--help',
             action=argparse._HelpAction,
             help='Show this help message and exit.',
         )
 
-    def get_options(self):
-        return self.options
+    def get_options(self) -> dict:
+        return self.__options
