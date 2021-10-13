@@ -17,11 +17,6 @@ from paws.scan_paw import ScanPaw
 
 # scan for clients on network
 
-# deauth:
-# https://www.thepythoncode.com/article/force-a-device-to-disconnect-scapy
-
-# evil twin maybe
-
 class Kitten:
 
     __arg_paw = None
