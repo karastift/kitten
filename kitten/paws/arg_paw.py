@@ -185,6 +185,11 @@ class ArgPaw:
             default=75,
             help='Max number of processes that will be opened at the same time.',
         )
+        scan_parser.add_argument(
+            '-j', '--json',
+            action='store_true',
+            help='Output will be in json format.'
+        )
     
     def __add_costum_help_arg(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
