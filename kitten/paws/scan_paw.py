@@ -4,6 +4,8 @@ import socket
 from time import sleep
 from scapy.layers.dot11 import Dot11, Dot11Beacon, Dot11Elt, sniff, Packet
 
+from objects.network import Network
+
 from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 
@@ -126,13 +128,13 @@ class ScanPaw(IfacePaw):
             crypto = stats.get('crypto')
 
             if bssid not in self.__networks_found.keys():
-                self.__networks_found[bssid] = {
-                    'bssid': bssid,
-                    'ssid': ssid,
-                    'dbm_signal': dbm_signal,
-                    'channel': channel,
-                    'crypto': list(crypto)[0]
-                }
+                self.__networks_found[bssid] = Network(
+                    bssid,
+                    ssid,
+                    dbm_signal,
+                    channel,
+                    crypto,
+                )
                 
                 self._util_paw.print_scanned_network(self.__networks_found[bssid])
 
