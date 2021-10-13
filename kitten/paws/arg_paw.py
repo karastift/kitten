@@ -60,14 +60,21 @@ class ArgPaw:
             help='Kick out devices from a network.',
         )
         deauth_parser.add_argument(
-            dest='bssid',
+            dest='network_mac',
             type=str,
             help='MAC of the targeted network.',
         )
         deauth_parser.add_argument(
             dest='interface',
             type=str,
-            help='Select the interface to use (has to support monitor mode).',
+            help='Name of the interface to use (has to support monitor mode).',
+        )
+        deauth_parser.add_argument(
+            '-t', '--target',
+            type=str,
+            default='',
+            required=False,
+            help='Define only one client to target. If undefined every client is attacked.',
         )
         deauth_parser.add_argument(
             '-i', '--interval',
@@ -81,7 +88,7 @@ class ArgPaw:
             type=int,
             default=None,
             required=False,
-            help='Change number of packets to send. If undefined count is infinite.',
+            help='Change number of packets to send. If undefined or zero count is infinite.',
         )
 
     def __configure_iface_parser(self, subparsers: argparse._SubParsersAction):

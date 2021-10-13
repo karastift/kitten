@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from paws.arg_paw import ArgPaw
+from paws.attack_paw import AttackPaw
 from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
@@ -27,6 +28,7 @@ class Kitten:
     util_paw = None
     scan_paw = None
     iface_paw = None
+    attack_paw = None
 
     command = None
 
@@ -42,6 +44,7 @@ class Kitten:
         self.util_paw = UtilPaw(self.options)
         self.scan_paw = ScanPaw(self.options, self.util_paw)
         self.iface_paw = IfacePaw(self.options, self.util_paw)
+        self.attack_paw = AttackPaw(self.util_paw)
 
         self.util_paw.print_prolog()
         self.handle_command()
@@ -72,11 +75,16 @@ class Kitten:
                 self.iface_paw.switch_interface_mode(self.options['mode'])
 
         elif command == 'attack':
+            self.attack_paw.set_verbose(self.options['verbose'])
 
             if method == 'deauth':
-                # start deauth packet injection
-                pass
+                self.attack_paw.set_target_network_mac(self.options['network_mac'])
+                self.attack_paw.set_target_mac(self.options['target'])
+                self.attack_paw.set_interface(self.options['interface'])
+                self.attack_paw.set_interval(self.options['interval'])
+                self.attack_paw.set_count(self.options['count'])
 
+                self.attack_paw.deauth()
 def main():
     try:
         Kitten()
