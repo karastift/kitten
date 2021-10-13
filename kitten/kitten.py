@@ -8,17 +8,6 @@ from paws.scan_paw import ScanPaw
 from scapy import interfaces
 from scapy.fields import M
 
-# get operating system on scan
-# https://www.linux.org/threads/nmap-os-detection.4564/
-# https://nmap.org/man/de/man-os-detection.html
-# https://nmap.org/book/nmap-os-db.html
-# https://svn.nmap.org/nmap/nmap-os-db (actual db)
-
-# basic attacking / testing
-# -> if a ssh port is found, recommend to test it
-# -> test most common passwords + users (maybe based on operating system)
-
-# scan for clients on network
 
 class Options:
     cmd = ''
@@ -62,7 +51,6 @@ class Options:
         self.target = target_mac
         self.interval = interval
         self.count = count
-            
 
 
 class Kitten:
