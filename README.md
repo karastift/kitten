@@ -1,7 +1,7 @@
 
 # kitten
 
-Kitten is a free and open-source network scanner.
+Kitten is a free and open-source network scanner. Currently only runs on Linux.
 ## Features
 
 - Scan a target for open ports (tcp only)
