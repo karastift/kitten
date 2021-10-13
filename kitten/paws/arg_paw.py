@@ -62,12 +62,26 @@ class ArgPaw:
         deauth_parser.add_argument(
             dest='bssid',
             type=str,
-            help='BSSID of the targeted network.',
+            help='MAC of the targeted network.',
         )
         deauth_parser.add_argument(
             dest='interface',
             type=str,
             help='Select the interface to use (has to support monitor mode).',
+        )
+        deauth_parser.add_argument(
+            '-i', '--interval',
+            type=float,
+            default=.1,
+            required=False,
+            help='Change the time between the sent packages.',
+        )
+        deauth_parser.add_argument(
+            '-c', '--count',
+            type=int,
+            default=None,
+            required=False,
+            help='Change number of packets to send. If undefined count is infinite.',
         )
 
     def __configure_iface_parser(self, subparsers: argparse._SubParsersAction):
