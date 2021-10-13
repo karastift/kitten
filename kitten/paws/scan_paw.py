@@ -1,11 +1,11 @@
+from time import sleep
+from typing import List, Dict
 from multiprocessing.dummy import Pool
 import threading
 import socket
-from time import sleep
 from scapy.layers.dot11 import Dot11, Dot11Beacon, Dot11Elt, sniff, Packet
 
 from objects.network import Network
-
 from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 
@@ -60,7 +60,7 @@ class ScanPaw(IfacePaw):
         return None
 
 
-    def get_services(self, ports: list) -> dict:
+    def get_services(self, ports: list) -> Dict[int, str]:
         services = dict.fromkeys(ports, 'unknown')
         for port in ports:
             try:
@@ -70,7 +70,7 @@ class ScanPaw(IfacePaw):
         
         return services
 
-    def get_open_ports_multiprocessing(self) -> list:
+    def get_open_ports_multiprocessing(self) -> List[int]:
         try:
             with Pool(self._maxprocesses) as p:
                 return list(filter(None, p.map(self.is_open_port, self._util_paw.get_most_common_ports())))
