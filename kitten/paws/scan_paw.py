@@ -150,6 +150,5 @@ class ScanPaw(IfacePaw):
             return self.__networks_found
         
         except PermissionError:
-            self.switch_interface_mode(self.__prev_mode)
             self._util_paw.print_permission_error()
             exit()

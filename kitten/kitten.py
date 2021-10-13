@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+from typing import Dict, Literal
 from paws.arg_paw import ArgPaw
 from paws.attack_paw import AttackPaw
 from paws.iface_paw import IfacePaw
 from paws.util_paw import UtilPaw
 from paws.scan_paw import ScanPaw
+from scapy import interfaces
+from scapy.fields import M
 
 # get operating system on scan
 # https://www.linux.org/threads/nmap-os-detection.4564/
@@ -17,6 +20,51 @@ from paws.scan_paw import ScanPaw
 
 # scan for clients on network
 
+class Options:
+    cmd = ''
+    mthd = ''
+    verbose = False,
+    # port scan
+    target = ''
+    maxthreads = 75
+    json = False
+    # network scan
+    interface = ''
+    automode = False
+    # deauth
+    target = ''
+    interval = .1
+    count = 0,
+
+    def __init__(
+        self,
+        command: Literal['attack', 'scan', 'iface'] = '',
+        method: Literal['deauth', 'mode', 'list', 'networks', 'ports'] = '',
+        verbose: bool = False,
+        target_ip: str = '',
+        max_threads: int = 0,
+        json: bool = False,
+        interface: str = '',
+        automode: bool = False,
+        target_mac: str = '',
+        interval: float = .1,
+        count: int = 0,
+
+    ) -> None:
+        self.cmd = command
+        self.mthd = method
+        self.verbose = verbose
+        self.target = target_ip
+        self.max_threads = max_threads
+        self.json = json
+        self.interface = interface
+        self.automode = automode
+        self.target = target_mac
+        self.interval = interval
+        self.count = count
+            
+
+
 class Kitten:
 
     __arg_paw = None
@@ -29,10 +77,17 @@ class Kitten:
 
     __options = {}
 
-    def __init__(self) -> None:
-        self.__arg_paw = ArgPaw()
+    def __init__(
+        self,
+        options: Options = Options()
+    ) -> None:
 
-        self.__options = self.__arg_paw.get_options()
+        if options.cmd and options.mthd:
+            self.__options = options.__dict__
+            print(self.__options)
+        else:
+            self.__arg_paw = ArgPaw()
+            self.__options = self.__arg_paw.get_options()
 
         self.__set_command(self.__options['cmd'])
 
