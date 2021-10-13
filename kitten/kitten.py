@@ -76,8 +76,8 @@ class Kitten:
                 self.__util_paw.print_port_scan_results(services)
 
             elif self.__method == 'networks':
-                self.__scan_paw.set_interface(self.__options['interface'])
                 self.__scan_paw.set_automode(self.__options['automode'])
+                self.__scan_paw.set_interface(self.__options['interface'])
 
                 self.__util_paw.print_networks_scan_info()
                 self.__scan_paw.scan_for_wireless_networks()
@@ -85,8 +85,14 @@ class Kitten:
         elif self.__command == 'iface':
 
             if self.__method == 'mode':
-                self.__iface_paw.set_interface(self.__options['interface'])
-                self.__iface_paw.switch_interface_mode(self.__options['mode'])
+                
+                interface_name = self.__options['interface']
+                mode = self.__options['mode']
+
+                interface = self.__iface_paw.get_interface_by_name(interface_name)
+                interface.switch_mode(mode)
+
+                self.__util_paw.print_text(f'\nPut {interface_name} into {mode} mode.', end='\n\n', color='white', attrs=['bold'])
             
             elif self.__method == 'list':
                 interfaces = self.__iface_paw.get_interfaces()
