@@ -11,7 +11,7 @@ class IfacePaw:
     _interface = ''
     _automode = bool()
 
-    def __init__(self, options, util_paw: UtilPaw) -> None:
+    def __init__(self, util_paw: UtilPaw) -> None:
         self.__util_paw = util_paw
 
     def set_automode(self, automode: bool) -> None:

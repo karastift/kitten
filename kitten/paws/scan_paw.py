@@ -21,9 +21,9 @@ class ScanPaw(IfacePaw):
     # scanning for networks
     __networks_found = {}
 
-    def __init__(self, options, util_paw: UtilPaw) -> None:
+    def __init__(self, util_paw: UtilPaw) -> None:
         self._util_paw = util_paw
-        super().__init__(options, self._util_paw)
+        super().__init__(self._util_paw)
 
     def set_target(self, target: str) -> None:
         try:
