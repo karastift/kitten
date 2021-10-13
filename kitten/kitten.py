@@ -64,7 +64,8 @@ class Kitten:
         if self.__command == 'scan':
 
             if self.__method == 'ports':
-                self.__util_paw.print_port_scan_info()
+
+                if not self.__options['json']: self.__util_paw.print_port_scan_info()
 
                 self.__scan_paw.set_target(self.__options['target'])
                 self.__scan_paw.set_maxprocesses(self.__options['maxprocesses'])
@@ -73,7 +74,10 @@ class Kitten:
                 open_ports = self.__scan_paw.get_open_ports_multiprocessing()
                 services = self.__scan_paw.get_services(open_ports)
 
-                self.__util_paw.print_port_scan_results(services)
+                if self.__options['json']:
+                    self.__util_paw.print_as_json(services)
+                else:
+                    self.__util_paw.print_port_scan_results(services)
 
             elif self.__method == 'networks':
                 self.__scan_paw.set_automode(self.__options['automode'])
