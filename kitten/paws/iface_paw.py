@@ -1,3 +1,4 @@
+from typing import List
 import subprocess
 from objects.interface import Interface
 
@@ -34,7 +35,7 @@ class IfacePaw:
     def get_selected_interface(self) -> Interface:
         return self._interface
 
-    def get_interfaces(self) -> list:
+    def get_interfaces(self) -> List[Interface]:
         output = subprocess.getoutput('iwconfig').split('\n\n')
 
         interfaces = []
