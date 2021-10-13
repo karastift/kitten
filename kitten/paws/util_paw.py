@@ -131,5 +131,24 @@ scan results:
         last_tab_space = '\t' if len(network['crypto']) >= 8 else '\t\t'
         self.print_text(f'''{self.ENDC}|    {self.BOLD}{network['bssid']}\t\t{network['dbm_signal']}\t\t{network['channel']}\t\t{network['crypto']}{last_tab_space}{network['ssid']}{self.ENDC}''')
 
+    def print_network_interfaces(self, interfaces: list):
+        self.print_text(f'''{self.ENDC}
+iface options:
+| method:
+|    {self.BOLD}(list) list all wireless network interfaces{self.ENDC}
+ ‾‾‾
+
+interfaces:
+| networks found:
+|    {self.BOLD}NAME\t\t\tMODE{self.ENDC}
+|'''    )
+        for interface in interfaces:
+            self.print_text(f'''{self.ENDC}|    {self.BOLD}{interface['name']}\t\t{interface['mode']}{self.ENDC}''')
+    
+        self.print_text(' ‾‾‾', attrs=['bold'])
+    
+    def print_as_json(self, dic: dict):
+        print(json.dumps(dic))
+
     def print_permission_error(self):
         self.print_text('Not enough permissions. Please restart with sudo.', color='red', attrs=['bold'])

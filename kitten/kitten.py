@@ -87,6 +87,14 @@ class Kitten:
             if self.__method == 'mode':
                 self.__iface_paw.set_interface(self.__options['interface'])
                 self.__iface_paw.switch_interface_mode(self.__options['mode'])
+            
+            elif self.__method == 'list':
+                interfaces = self.__iface_paw.get_interfaces()
+
+                if self.__options['json']:
+                    self.__util_paw.print_as_json(interfaces)
+                else:
+                    self.__util_paw.print_network_interfaces(interfaces)
 
         elif self.__command == 'attack':
             self.__attack_paw.set_verbose(self.__options['verbose'])
