@@ -7,22 +7,17 @@ class UtilPaw:
 
     verbose = None
 
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    CYAN = '\033[96m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    RED = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
     colors_dict = {
-        'blue': BLUE,
-        'cyan': CYAN,
-        'green': GREEN,
-        'yellow': WARNING,
-        'red': RED,
+        'header': '\033[95m',
+        'underline': '\033[4m',
+        'blue': '\033[94m',
+        'cyan': '\033[96m',
+        'green': '\033[92m',
+        'yellow': '\033[93m',
+        'red': '\033[91m',
         'white': '',
     }
 
@@ -67,11 +62,35 @@ class UtilPaw:
         self.print_text(f'''{self.ENDC}
 scan options:
 | method:
-|    {self.BOLD}scanning for ports{self.ENDC}
+|    {self.BOLD}(ports) scanning for ports{self.ENDC}
 | target:
 |    {self.BOLD}{target}{self.ENDC}
 | max number of processes:
 |    {self.BOLD}{max_processes}{self.ENDC}
+ ‾‾‾
+'''     )
+
+    def print_attack_deauth_info(self) -> None:
+        target_network_mac = self.options['network_mac']
+        interface = self.options['interface']
+        target_mac = self.options['target']
+        interval = self.options['interval']
+        count = self.options['count']
+
+        self.print_text(f'''{self.ENDC}
+attack options:
+| method:
+|    {self.BOLD}(deauth) disconnecting clients with deauth packets{self.ENDC}
+| targeted_network:
+|    {self.BOLD}{target_network_mac}{self.ENDC}
+| interface:
+|    {self.BOLD}{interface}{self.ENDC}
+| targeted client:
+|    {self.BOLD}{'ff:ff:ff:ff:ff:ff (broadcast)' if not target_mac else target_mac}{self.ENDC}
+| interval:
+|    {self.BOLD}{interval}{self.ENDC}
+| count:
+|    {self.BOLD}{count if count else '∞'}{self.ENDC}
  ‾‾‾
 '''     )
     
@@ -94,7 +113,7 @@ scan results:
         self.print_text(f'''{self.ENDC}
 scan options:
 | method:
-|    {self.BOLD}scanning for networks{self.ENDC}
+|    {self.BOLD}(networks) scanning for networks{self.ENDC}
 | interface:
 |    {self.BOLD}{target}{self.ENDC}
  ‾‾‾

