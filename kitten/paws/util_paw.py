@@ -152,7 +152,7 @@ interfaces:
 |    {self.BOLD}NAME\t\t\tMODE{self.ENDC}
 |'''    )
         for interface in interfaces:
-            self.print_text(f'''{self.ENDC}|    {self.BOLD}{interface['name']}\t\t{interface['mode']}{self.ENDC}''')
+            self.print_text(f'''{self.ENDC}|    {self.BOLD}{interface.get_name()}\t\t{interface.get_mode()}{self.ENDC}''')
     
         self.print_text(' ‾‾‾', attrs=['bold'])
     
