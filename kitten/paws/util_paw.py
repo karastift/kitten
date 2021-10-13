@@ -1,6 +1,8 @@
 import json
 import os
 
+from objects.network import Network
+
 class UtilPaw:
 
     __options = None
@@ -127,9 +129,16 @@ scan results:
 |    {self.BOLD}BSSID\t\t\tDBMSIGNAL\tCHANNEL\t\tCRYPTO\t\tSSID{self.ENDC}
 |''')
 
-    def print_scanned_network(self, network: dict) -> None:
-        last_tab_space = '\t' if len(network['crypto']) >= 8 else '\t\t'
-        self.print_text(f'''{self.ENDC}|    {self.BOLD}{network['bssid']}\t\t{network['dbm_signal']}\t\t{network['channel']}\t\t{network['crypto']}{last_tab_space}{network['ssid']}{self.ENDC}''')
+    def print_scanned_network(self, network: Network) -> None:
+        
+        bssid = network.get_bssid()
+        ssid = network.get_ssid()
+        dbm_signal = network.get_dbm_signal()
+        channel = network.get_channel()
+        crypto = list(network.get_crypto())[0]
+
+        last_tab_space = '\t' if len(crypto) >= 8 else '\t\t'
+        self.print_text(f'''{self.ENDC}|    {self.BOLD}{bssid}\t\t{dbm_signal}\t\t{channel}\t\t{crypto}{last_tab_space}{ssid}{self.ENDC}''')
 
     def print_network_interfaces(self, interfaces: list):
         self.print_text(f'''{self.ENDC}
