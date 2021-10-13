@@ -80,8 +80,8 @@ class Kitten:
         self.__set_command(self.__options['cmd'])
 
         self.__util_paw = UtilPaw(self.__options)
-        self.__scan_paw = ScanPaw(self.__options, self.__util_paw)
-        self.__iface_paw = IfacePaw(self.__options, self.__util_paw)
+        self.__scan_paw = ScanPaw(self.__util_paw)
+        self.__iface_paw = IfacePaw(self.__util_paw)
         self.__attack_paw = AttackPaw(self.__util_paw)
 
         self.__util_paw.set_verbose(self.__options['verbose'])
@@ -157,6 +157,17 @@ class Kitten:
                 self.__attack_paw.set_count(self.__options['count'])
 
                 self.__attack_paw.deauth()
+            
+            if self.__method == 'fakeap':
+                self.__util_paw.print_attack_fake_ap_info()
+
+                self.__attack_paw.set_ssid(self.__options['ssid'])
+                self.__attack_paw.set_automode(self.__options['automode'])
+                self.__attack_paw.set_interface(self.__options['interface'])
+                self.__attack_paw.set_interval(self.__options['interval'])
+                self.__attack_paw.set_mac_address(self.__options['mac_address'])
+
+                self.__attack_paw.fake_ap()
 
 
 def main() -> None:
