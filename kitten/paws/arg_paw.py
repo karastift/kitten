@@ -101,6 +101,7 @@ class ArgPaw:
         )
 
         self.__configure_iface_mode_parser(subparsers)
+        self.__configure_iface_list_parser(subparsers)
 
     def __configure_iface_mode_parser(self, subparsers: argparse._SubParsersAction) -> None:
         mode_parser = subparsers.add_parser(
@@ -117,6 +118,17 @@ class ArgPaw:
             type=str,
             help='The mode your interface will be put in.',
             choices=['managed', 'monitor']
+        )
+    
+    def __configure_iface_list_parser(self, subparsers: argparse._SubParsersAction) -> None:
+        list_parser = subparsers.add_parser(
+            name='list',
+            help='List network interfaces.',
+        )
+        list_parser.add_argument(
+            '-j', '--json',
+            action='store_true',
+            help='Output will be in json format.'
         )
     
     def __configure_scan_parser(self, subparsers: argparse._SubParsersAction) -> None:
