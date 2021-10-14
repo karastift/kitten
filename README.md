@@ -4,6 +4,8 @@
 Kitten is a free and open-source network scanner. Currently only runs on Linux.
 ## Features
 
+- Force clients to disconnect from networks
+- Fake an access point
 - Scan a target for open ports (tcp only)
 - Scan for wireless networks in your area
 - Configure your network interfaces
