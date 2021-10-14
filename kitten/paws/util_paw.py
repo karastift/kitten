@@ -76,6 +76,28 @@ scan options:
  ‾‾‾
 '''     )
 
+    def print_attack_fake_ap_info(self) -> None:
+        interface = self.__options['interface']
+        ssid = self.__options['ssid']
+        mac_address = self.__options['mac_address']
+        interval = self.__options['interval']
+
+        self.print_text(f'''{self.ENDC}
+scan options:
+| method:
+|    {self.BOLD}(fakeap) faking a wireless access point{self.ENDC}
+| interface:
+|    {self.BOLD}{interface}{self.ENDC}
+| ssid:
+|    {self.BOLD}{ssid}{self.ENDC}
+| bssid:
+|    {self.BOLD}{mac_address}{self.ENDC}
+| interval:
+|    {self.BOLD}{interval}{self.ENDC}
+ ‾‾‾
+
+sending beacon frames (press Ctrl+C to finish):''') 
+
     def print_attack_deauth_info(self) -> None:
         target_network_mac = self.__options['network_mac']
         interface = self.__options['interface']
@@ -155,7 +177,7 @@ interfaces:
             self.print_text(f'''{self.ENDC}|    {self.BOLD}{interface.get_name()}\t\t{interface.get_mode()}{self.ENDC}''')
     
         self.print_text(' ‾‾‾', attrs=['bold'])
-    
+
     def print_as_json(self, dic: dict):
         print(json.dumps(dic))
 
