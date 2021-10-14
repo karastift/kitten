@@ -1,0 +1,88 @@
+import subprocess
+from typing import List, Literal
+
+Mode = Literal['managed', 'monitor']
+
+class Interface:
+
+    def __init__(self, name: str, mode: Mode) -> None:
+        self._name = name
+        self._mode = mode
+
+    def __set_mode(self, mode: str) -> None:
+        '''
+        ### Do not use this method in your own scripts! The method is shall only be used in the Interface class It will only set the attribute of the class to the mode. It won't change the behaviour of the device.
+        '''
+        self._mode = mode
+
+    def get_name(self) -> str:
+        return self._name
+
+    def get_mode(self) -> Mode:
+        return self._mode
+    
+    def switch_mode(self, mode: Mode):
+        assert mode in {'monitor', 'managed'}, f'Invalid mode "{mode}". Please choose "managed" or "monitor".'
+        try:
+            process = subprocess.Popen(f'ifconfig {self._name} down'.split(' '))
+            code = process.wait()
+
+            if code == 255:
+                process.kill()
+                raise PermissionError
+
+
+            subprocess.Popen(f'iwconfig {self._name} mode {mode}'.split(' ')).wait()
+            subprocess.Popen(f'ifconfig {self._name} up'.split(' ')).wait()
+
+            self.__set_mode(mode)
+
+        except PermissionError:
+            self.__util_paw.print_permission_error()
+            exit()
+    
+    def __str__(self):
+        return self.get_name()
+
+def get_interfaces() -> List[Interface]:
+    output = subprocess.getoutput('iwconfig').split('\n\n')
+
+    interfaces = []
+    
+    for line in output:
+        if 'no wireless' in line:
+            continue
+
+        name = ''
+        mode = ''
+
+        if '802' in line:
+            name = line.split(' ')[0]
+        
+        if 'Managed' in line:
+            mode = 'managed'
+
+        if 'Monitor' in line:
+            mode = 'monitor'
+
+        interfaces.append(Interface(
+            name = name,
+            mode = mode,
+        ))
+    
+    return interfaces
+        
+def get_interface_by_name(name: str) -> Interface:
+    interfaces = get_interfaces()
+    try:
+        return next(iface for iface in interfaces if iface.get_name() == name)
+    except StopIteration:
+        raise InterfaceNotFoundError(name)
+
+class InterfaceNotFoundError(Exception):
+    """Exception raised for invalid interface names."""
+
+    def __init__(self, interface_name: str):
+        self.interface_name = interface_name
+        self.message = f'No network interface "{self.interface_name}" with wireless extension found.'
+        super().__init__(self.message)
