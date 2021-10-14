@@ -2,6 +2,7 @@ import subprocess
 from typing import Dict, List, Literal
 from objects.network import Network
 from scapy.layers.dot11 import sniff, Dot11, Packet, Dot11Elt, Dot11Beacon
+from utils.output import print_scanned_network
 
 Mode = Literal['managed', 'monitor']
 
@@ -87,7 +88,7 @@ class Interface:
                     crypto,
                 )
                 
-                print(self.__scanned_networks[bssid])
+                print_scanned_network(self.__scanned_networks[bssid])
     def __str__(self):
         return self.get_name()
 
