@@ -13,28 +13,12 @@ class AccessPoint(Network):
         bssid: str = str(RandMAC()),
     ) -> None:
 
-        Network.__init__(
-            self,
-            bssid = bssid,
+        super().__init__(
             ssid = ssid,
+            bssid = bssid,
         )
 
         self._interface = interface
-
-        # 802.11 frame
-        self._dot11 = Dot11(
-            type=0,
-            subtype=8,
-            addr1='ff:ff:ff:ff:ff:ff',
-            addr2=self._bssid,
-            addr3=self._bssid,
-        )
-        # beacon layer
-        # ESS+privacy to appear as secured on some devices
-        self._beacon = Dot11Beacon(cap='ESS+privacy')
-        self._essid = Dot11Elt(ID='SSID', info=ssid, len=len(ssid))
-        # stack all the layers and add a RadioTap
-        self._frame = RadioTap()/self._dot11/self._beacon/self._essid
 
     def get_interface(self) -> Interface:
         return self._interface
@@ -45,7 +29,24 @@ class AccessPoint(Network):
     def appear(
         self,
         interval: float = .1,
+        bssid: str = ''
     ) -> None:
+        bssid = bssid if bssid else self._bssid
+
+        # 802.11 frame
+        self._dot11 = Dot11(
+            type=0,
+            subtype=8,
+            addr1='ff:ff:ff:ff:ff:ff',
+            addr2=bssid,
+            addr3=bssid,
+        )
+        # beacon layer
+        # ESS+privacy to appear as secured on some devices
+        self._beacon = Dot11Beacon(cap='ESS+privacy')
+        self._essid = Dot11Elt(ID='SSID', info=self._ssid, len=len(self._ssid))
+        # stack all the layers and add a RadioTap
+        self._frame = RadioTap()/self._dot11/self._beacon/self._essid
 
         sendp(
             x = self._frame,
