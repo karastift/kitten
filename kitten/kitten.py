@@ -129,7 +129,7 @@ class Kitten:
 
                 EvilTwin(
                     ssid = self.options['ssid'],
-                    bssid = self.options['mac_address'],
+                    bssid = self.options['bssid'],
                     interface = interface,
                 ).start(
                     interval = self.options.get('interval'),
