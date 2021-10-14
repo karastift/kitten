@@ -141,6 +141,11 @@ class ArgumentParser:
             help='Name of the targeted network.',
         )
         eviltwin_parser.add_argument(
+            dest='bssid',
+            type=str,
+            help='BSSID of the targeted network.',
+        )
+        eviltwin_parser.add_argument(
             dest='interface',
             type=str,
             help='Name of the interface to use (has to support monitor mode).',

@@ -89,7 +89,6 @@ def print_attack_eviltwin_info(options: dict) -> None:
     interface = options.get('interface')
     ssid = options.get('ssid')
     bssid = options.get('bssid')
-    mac_address = options.get('mac_address')
     interval = options.get('interval')
 
     print_text(f'''{ENDC}
@@ -102,8 +101,6 @@ attack options:
 |    {BOLD}{ssid}{ENDC}
 | bssid of targeted access point:
 |    {BOLD}{bssid}{ENDC}
-| bssid of created access point:
-|    {BOLD}{mac_address}{ENDC}
 | interval:
 |    {BOLD}{interval}{ENDC}
  ‾‾‾
