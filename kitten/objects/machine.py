@@ -4,7 +4,7 @@ from ipaddress import IPv4Address, IPv6Address
 from typing import List
 
 from objects.port import Port
-from paws.util_paw import UtilPaw
+from utils.data import get_most_common_ports
 
 
 class Machine:
@@ -62,7 +62,7 @@ class Machine:
         self,
         maxprocesses: int = 75,
     ) -> None:
-        common_ports = UtilPaw({'verbose': True}).get_most_common_ports()
+        common_ports = get_most_common_ports()
 
 
         try:

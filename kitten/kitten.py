@@ -130,6 +130,7 @@ class Kitten:
             return get_interface_by_name(interface_name)
         except InterfaceNotFoundError as e:
             print_text(e.message, attrs=['bold'])
+            exit()
 
 
 def main() -> None:
