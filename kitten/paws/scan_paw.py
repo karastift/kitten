@@ -139,16 +139,3 @@ class ScanPaw(IfacePaw):
                 )
                 
                 self._util_paw.print_scanned_network(self.__networks_found[bssid])
-
-    def scan_for_wireless_networks(self) -> None:
-        try:
-            sniff(prn=self.__handle_packet, iface=self.get_selected_interface().get_name())
-
-        except KeyboardInterrupt:
-
-            self.switch_interface_mode(self.__prev_mode)
-            return self.__networks_found
-        
-        except PermissionError:
-            self._util_paw.print_permission_error()
-            exit()

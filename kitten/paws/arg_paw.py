@@ -70,9 +70,14 @@ class ArgPaw:
             help='Name of the interface to use (has to support monitor mode).',
         )
         deauth_parser.add_argument(
+            '-am', '--automode',
+            action='store_true',
+            help='The selected interface is automatically put into the required mode.',
+        )
+        deauth_parser.add_argument(
             '-t', '--target',
             type=str,
-            default='',
+            default=None,
             required=False,
             help='Define only one client to target. If undefined every client is attacked.',
         )
@@ -92,33 +97,33 @@ class ArgPaw:
         )
 
     def __configure_attack_fake_ap_parser(self, subparsers: argparse._SubParsersAction) -> None:
-        deauth_parser = subparsers.add_parser(
+        fake_ap_parser = subparsers.add_parser(
             name='fakeap',
             help='Fake a wireless access point',
         )
-        deauth_parser.add_argument(
+        fake_ap_parser.add_argument(
             dest='interface',
             type=str,
             help='Name of the interface to use (has to support monitor mode).',
         )
-        deauth_parser.add_argument(
+        fake_ap_parser.add_argument(
             dest='ssid',
             type=str,
             help='Name of the fake access point.',
         )
-        deauth_parser.add_argument(
+        fake_ap_parser.add_argument(
             '-m', '--mac_address',
             default=str(RandMAC()),
             type=str,
             required=False,
             help='Mac address of the fake access point. (If undefined the address is randomly chosen).',
         )
-        deauth_parser.add_argument(
+        fake_ap_parser.add_argument(
             '-am', '--automode',
             action='store_true',
             help='The selected interface is automatically put into the required mode.',
         )
-        deauth_parser.add_argument(
+        fake_ap_parser.add_argument(
             '-i', '--interval',
             type=float,
             default=.1,
@@ -210,12 +215,6 @@ class ArgPaw:
             dest='target',
             type=str,
             help='Define the target that is to be scanned.',
-        )
-        scan_parser.add_argument(
-            '-mt', '--maxthreads',
-            type=int,
-            default=100,
-            help='Max number of threads that will be opened at the same time.',
         )
         scan_parser.add_argument(
             '-mp', '--maxprocesses',

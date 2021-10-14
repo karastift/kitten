@@ -1,7 +1,10 @@
 import json
 import os
+from typing import List
+from objects.interfaces import Interface
 
 from objects.network import Network
+from objects.port import Port
 
 class UtilPaw:
 
@@ -83,7 +86,7 @@ scan options:
         interval = self.__options['interval']
 
         self.print_text(f'''{self.ENDC}
-scan options:
+attack options:
 | method:
 |    {self.BOLD}(fakeap) faking a wireless access point{self.ENDC}
 | interface:
@@ -122,19 +125,26 @@ attack options:
  ‾‾‾
 '''     )
     
-    def print_port_scan_results(self, scan_results: dict) -> None:
+    def print_port_scan_results(self, ports: List[Port]) -> None:
         self.print_text(f'''{self.ENDC}
 scan results:
 | ports:''')
 
-        if len(scan_results.keys()) == 0:
+        if len(ports) == 0:
             self.print_text(f'''{self.ENDC}|   {self.BOLD}No open ports discovered.{self.ENDC}''')
         else:
-            for port in scan_results.keys():
-                self.print_text(f'''{self.ENDC}|    {self.BOLD}{port} -> {scan_results[port]}{self.ENDC}''')
+            for port in ports:
+                self.print_text(f'''{self.ENDC}|    {self.BOLD}{port.port_number} -> {port.service}{self.ENDC}''')
 
         self.print_text(f'{self.ENDC} ‾‾‾')
 
+
+    def print_port_scan_results_json(self, ports: List[Port]):
+        dic = dict()
+        for port in ports:
+            dic[port.port_number] = port.service
+        print(json.dumps(dic))
+        
     def print_networks_scan_info(self) -> None:
         target = self.__options['interface']
 
@@ -162,7 +172,7 @@ scan results:
         last_tab_space = '\t' if len(crypto) >= 8 else '\t\t'
         self.print_text(f'''{self.ENDC}|    {self.BOLD}{bssid}\t\t{dbm_signal}\t\t{channel}\t\t{crypto}{last_tab_space}{ssid}{self.ENDC}''')
 
-    def print_network_interfaces(self, interfaces: list):
+    def print_network_interfaces(self, interfaces: List[Interface]):
         self.print_text(f'''{self.ENDC}
 iface options:
 | method:
@@ -170,7 +180,6 @@ iface options:
  ‾‾‾
 
 interfaces:
-| networks found:
 |    {self.BOLD}NAME\t\t\tMODE{self.ENDC}
 |'''    )
         for interface in interfaces:
@@ -183,3 +192,10 @@ interfaces:
 
     def print_permission_error(self):
         self.print_text('Not enough permissions. Please restart with sudo.', color='red', attrs=['bold'])
+
+    def print_network_interfaces_json(self, interfaces: List[Interface]):
+        dic = dict()
+        for interface in interfaces:
+            dic[interface.get_name()] = interface.get_mode()
+        
+        print(json.dumps(dic))

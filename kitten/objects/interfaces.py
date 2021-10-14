@@ -1,5 +1,7 @@
 import subprocess
-from typing import List, Literal
+from typing import Dict, List, Literal
+from objects.network import Network
+from scapy.layers.dot11 import sniff, Dot11, Packet, Dot11Elt, Dot11Beacon
 
 Mode = Literal['managed', 'monitor']
 
@@ -8,6 +10,8 @@ class Interface:
     def __init__(self, name: str, mode: Mode) -> None:
         self._name = name
         self._mode = mode
+        self._prev_mode = mode
+        self.__scanned_networks: Dict[str, List[Network]] = dict()
 
     def __set_mode(self, mode: str) -> None:
         '''
@@ -40,9 +44,53 @@ class Interface:
         except PermissionError:
             self.__util_paw.print_permission_error()
             exit()
+
+    def scan_for_wireless_networks(self) -> Dict[str, Network]:
+        try:
+            sniff(prn=self.__handle_packet, iface=self.get_name())
+
+        except KeyboardInterrupt:
+            self.switch_mode(self._prev_mode)
+            return self.__scanned_networks
+        
+        except PermissionError as e:
+            print(e)
+            exit()
     
+    def __handle_packet(self, packet: Packet) -> None:
+        if packet.haslayer(Dot11Beacon):
+            
+            bssid = packet[Dot11].addr2
+            
+            try:
+                ssid = packet[Dot11Elt].info.decode()
+            except UnicodeDecodeError:
+                ssid = packet[Dot11Elt].info
+            
+            try:
+                dbm_signal = packet.dBm_AntSignal
+            except:
+                dbm_signal = 'N/A'
+            
+            stats = packet[Dot11Beacon].network_stats()
+            
+            channel = stats.get('channel')
+            
+            crypto = stats.get('crypto')
+
+            if bssid not in self.__scanned_networks.keys():
+                self.__scanned_networks[bssid] = Network(
+                    bssid,
+                    ssid,
+                    dbm_signal,
+                    channel,
+                    crypto,
+                )
+                
+                print(self.__scanned_networks[bssid])
     def __str__(self):
         return self.get_name()
+
 
 def get_interfaces() -> List[Interface]:
     output = subprocess.getoutput('iwconfig').split('\n\n')
