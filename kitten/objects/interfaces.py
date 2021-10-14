@@ -2,7 +2,7 @@ import subprocess
 from typing import Dict, List, Literal
 from objects.network import Network
 from scapy.layers.dot11 import sniff, Dot11, Packet, Dot11Elt, Dot11Beacon
-from utils.output import print_scanned_network
+from utils.output import print_permission_error, print_scanned_network
 
 Mode = Literal['managed', 'monitor']
 
@@ -26,6 +26,7 @@ class Interface:
     def get_mode(self) -> Mode:
         return self._mode
     
+    
     def switch_mode(self, mode: Mode):
         assert mode in {'monitor', 'managed'}, f'Invalid mode "{mode}". Please choose "managed" or "monitor".'
         try:
@@ -43,7 +44,7 @@ class Interface:
             self.__set_mode(mode)
 
         except PermissionError:
-            self.__util_paw.print_permission_error()
+            print_permission_error()
             exit()
 
     def scan_for_wireless_networks(self) -> Dict[str, Network]:
