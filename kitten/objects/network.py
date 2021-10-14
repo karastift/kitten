@@ -1,4 +1,12 @@
-from objects.interfaces import Interface
+# from objects.interfaces import Interface
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # imports that are only used for typechecking
+    from objects.interfaces import Interface
+
 from scapy.layers.dot11 import Dot11, Dot11Deauth, RadioTap, sendp
 
 class Network:
@@ -66,3 +74,6 @@ class Network:
             iface = interface.get_name(),
             verbose = verbose,
         )
+    
+    def __str__(self) -> str:
+        return str(self.__dict__)

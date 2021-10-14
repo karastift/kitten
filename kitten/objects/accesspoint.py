@@ -9,8 +9,8 @@ class AccessPoint(Network):
     def __init__(
         self,
         ssid: str,
-        bssid: str = str(RandMAC()),
         interface: Interface,
+        bssid: str = str(RandMAC()),
     ) -> None:
 
         Network.__init__(
@@ -26,8 +26,8 @@ class AccessPoint(Network):
             type=0,
             subtype=8,
             addr1='ff:ff:ff:ff:ff:ff',
-            addr2=mac_address,
-            addr3=mac_address,
+            addr2=self._bssid,
+            addr3=self._bssid,
         )
         # beacon layer
         # ESS+privacy to appear as secured on some devices

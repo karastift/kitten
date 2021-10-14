@@ -1,6 +1,6 @@
 from typing import List
 import subprocess
-from objects.interface import Interface
+from objects.interfaces import Interface
 
 from paws.util_paw import UtilPaw
 
@@ -27,38 +27,3 @@ class IfacePaw:
         
         if not self._automode and interface.get_mode() == 'managed':
             self.__util_paw.print_text('Your interface is in managed mode. Some scans require monitor mode. So if you get no results that could be the reason. Set the -am flag to automatically change the mode into the required one.', color='yellow', attrs=['bold'])
-        
-    def get_interface_by_name(self, name: str) -> Interface:
-        interfaces = self.get_interfaces()
-        return next(iface for iface in interfaces if iface.get_name() == name)
-
-    def get_selected_interface(self) -> Interface:
-        return self._interface
-
-    def get_interfaces(self) -> List[Interface]:
-        output = subprocess.getoutput('iwconfig').split('\n\n')
-
-        interfaces = []
-        
-        for line in output:
-            if 'no wireless' in line:
-                continue
-
-            name = ''
-            mode = ''
-
-            if '802' in line:
-                name = line.split(' ')[0]
-            
-            if 'Managed' in line:
-                mode = 'managed'
-
-            if 'Monitor' in line:
-                mode = 'monitor'
-
-            interfaces.append(Interface(
-                name=name,
-                mode=mode,
-            ))
-        
-        return interfaces
