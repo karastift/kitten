@@ -23,12 +23,14 @@ class AccessPoint(Network):
     def get_interface(self) -> Interface:
         return self._interface
     
+    def get_frame(self):
+        return self._frame
+    
     def set_interface(self, interface: Interface) -> None:
         self._interface = interface
 
-    def appear(
+    def craft_beacon_frame(
         self,
-        interval: float = .1,
         bssid: str = ''
     ) -> None:
         bssid = bssid if bssid else self._bssid
@@ -48,6 +50,10 @@ class AccessPoint(Network):
         # stack all the layers and add a RadioTap
         self._frame = RadioTap()/self._dot11/self._beacon/self._essid
 
+    def appear(
+        self,
+        interval: float = .1,
+    ) -> None:
         sendp(
             x = self._frame,
             iface = self._interface.get_name(),

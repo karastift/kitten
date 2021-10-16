@@ -101,14 +101,17 @@ class Kitten:
 
                 self.handle_automode(interface)
 
-                Network(bssid=self.options['network_mac']).deauth(
+                network = Network(bssid=self.options['network_mac'])            
+                network.craft_deauth_packet(
+                    target_mac = self.options['target']
+                )
+                network.deauth(
                     interface = interface,
-                    target_mac = self.options['target'],
                     interval = self.options['interval'],
                     count = self.options['count'],
                     verbose = True,
                 )
-            
+
             if self.method == 'fakeap':
                 print_attack_fake_ap_info(self.options)
                 
@@ -116,11 +119,13 @@ class Kitten:
 
                 self.handle_automode(interface)                
 
-                AccessPoint(
+                ap = AccessPoint(
                     ssid = self.options['ssid'],
                     bssid = self.options['mac_address'],
                     interface = interface,
-                ).appear(interval=self.options['interval'])
+                )
+                ap.craft_beacon_frame()
+                ap.appear(interval=self.options['interval'])
             
             if self.method == 'eviltwin':
                 print_attack_eviltwin_info(self.options)
