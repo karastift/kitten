@@ -49,7 +49,7 @@ class Interface:
 
     def scan_for_wireless_networks(self) -> Dict[str, Network]:
         try:
-            sniff(prn=self.__handle_packet, iface=self.get_name())
+            sniff(prn=self.__handle_beacon_packet, iface=self.get_name())
 
         except KeyboardInterrupt:
             self.switch_mode(self._prev_mode)
@@ -59,7 +59,7 @@ class Interface:
             print(e)
             exit()
     
-    def __handle_packet(self, packet: Packet) -> None:
+    def __handle_beacon_packet(self, packet: Packet) -> None:
         if packet.haslayer(Dot11Beacon):
             
             bssid = packet[Dot11].addr2
@@ -90,6 +90,7 @@ class Interface:
                 )
                 
                 print_scanned_network(self.__scanned_networks[bssid])
+
     def __str__(self):
         return self.get_name()
 
