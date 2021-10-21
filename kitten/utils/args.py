@@ -59,6 +59,16 @@ class ArgumentParser:
             help='Spoof dns requests.',
         )
         dnsspoof_parser.add_argument(
+            dest='target_ip',
+            type=str,
+            help='Ipaddress of the target.',
+        )
+        dnsspoof_parser.add_argument(
+            dest='host_ip',
+            type=str,
+            help='Ipaddress of the host.',
+        )
+        dnsspoof_parser.add_argument(
             dest='interface',
             type=str,
             help='Name of the interface to use (has to support monitor mode).',
