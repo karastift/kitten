@@ -51,7 +51,28 @@ class ArgumentParser:
         self.__configure_attack_deauth_parser(subparsers)
         self.__configure_attack_fake_ap_parser(subparsers)
         self.__configure_attack_eviltwin_parser(subparsers)
+        self.__configure_attack_dnsspoof_parser(subparsers)
 
+    def __configure_attack_dnsspoof_parser(self, subparsers: argparse._SubParsersAction) -> None:
+        dnsspoof_parser = subparsers.add_parser(
+            name='dnsspoof',
+            help='Spoof dns requests.',
+        )
+        dnsspoof_parser.add_argument(
+            dest='interface',
+            type=str,
+            help='Name of the interface to use (has to support monitor mode).',
+        )
+        dnsspoof_parser.add_argument(
+            dest='host_to_ip',
+            type=str,
+            help='Path to json file in which the dns mapping records are.',
+        )
+        dnsspoof_parser.add_argument(
+            '-am', '--automode',
+            action='store_true',
+            help='The selected interface is automatically put into the required mode.',
+        )
 
     def __configure_attack_deauth_parser(self, subparsers: argparse._SubParsersAction) -> None:
         deauth_parser = subparsers.add_parser(

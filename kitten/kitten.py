@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 from ipaddress import IPv4Address
+from json import load
 
 from objects.accesspoint import AccessPoint
+from objects.dns_spoofer import DNSSpoofer
 from objects.eviltwin import EvilTwin
 from objects.interfaces import (Interface, InterfaceNotFoundError,
                                 get_interface_by_name, get_interfaces)
+from objects.iptables import Iptables
 from objects.machine import Machine
 from objects.network import Network
 
@@ -109,7 +112,7 @@ class Kitten:
                     verbose = True,
                 )
             
-            if self.method == 'fakeap':
+            elif self.method == 'fakeap':
                 print_attack_fake_ap_info(self.options)
                 
                 interface = self.get_interface_safe(self.options['interface'])
@@ -122,8 +125,10 @@ class Kitten:
                     interface = interface,
                 ).appear(interval=self.options['interval'])
             
-            if self.method == 'eviltwin':
+            elif self.method == 'eviltwin':
                 print_attack_eviltwin_info(self.options)
+
+                interface = self.get_interface_safe(self.options.get('interface'))
 
                 self.handle_automode(interface)
 
@@ -135,6 +140,29 @@ class Kitten:
                     interval = self.options.get('interval'),
                     count = self.options.get('count'),
                 )
+
+            elif self.method == 'dnsspoof':
+                print_text('Missing info method.', attrs=['bold'])
+
+                interface = self.get_interface_safe(self.options.get('interface'))
+                dns_hosts = load(open(self.options.get('host_to_ip'), 'r'))
+
+                self.handle_automode(interface)
+
+                queue_num = 0
+                
+                iptables = Iptables()
+                iptables.insert_forward_rule(queue_num)
+
+                try:
+                    DNSSpoofer(
+                        host_to_ip = dns_hosts,
+                        interface = interface
+                    ).start(queue_num)
+                except KeyboardInterrupt:
+                    iptables.flush_rules()
+                
+            
     
     def handle_automode(self, interface: Interface) -> None:
         if self.options['automode'] and interface.get_mode() != 'monitor':
