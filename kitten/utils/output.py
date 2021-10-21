@@ -193,13 +193,13 @@ interfaces:
 
     print_text(' ‾‾‾', attrs=['bold'])
 
-def print_as_json( dic: dict):
+def print_as_json(dic: dict):
     print(json.dumps(dic))
 
 def print_permission_error():
     print_text('Not enough permissions. Please restart with sudo.', color='red', attrs=['bold'])
 
-def print_network_interfaces_json( interfaces: List[Interface]):
+def print_network_interfaces_json(interfaces: List[Interface]):
     dic = dict()
     for interface in interfaces:
         dic[interface.get_name()] = interface.get_mode()
