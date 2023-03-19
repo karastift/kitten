@@ -1,5 +1,6 @@
 from scapy.layers.dot11 import Dot11, Dot11Beacon, RadioTap, Dot11Elt, sendp
 from scapy.volatile import RandMAC
+from scapy.config import conf
 
 from objects.interfaces import Interface
 from objects.network import Network
@@ -31,6 +32,9 @@ class AccessPoint(Network):
         interval: float = .1,
         bssid: str = ''
     ) -> None:
+
+        conf.use_pcap = True
+
         bssid = bssid if bssid else self._bssid
 
         # 802.11 frame
@@ -54,4 +58,5 @@ class AccessPoint(Network):
             inter = interval,
             loop = True,
             verbose = False,
+            monitor=True,
         )
