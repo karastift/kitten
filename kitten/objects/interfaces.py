@@ -60,8 +60,8 @@ class Interface:
         
         # MacOS
         elif platform == 'darwin':
-            # use airport for getting networks and returning it as xml
-            output = subprocess.getoutput('airport -s')
+            # use airport command for getting networks
+            output = subprocess.getoutput('/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s')
 
             # skip first line because these are only headers
             raw_network_strings = output.split('\n')[1:]
