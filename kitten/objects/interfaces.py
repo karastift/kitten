@@ -1,4 +1,6 @@
 import subprocess
+from sys import platform
+import xml.etree.ElementTree as ET
 from typing import Dict, List, Literal
 from objects.network import Network
 from scapy.layers.dot11 import sniff, Dot11, Packet, Dot11Elt, Dot11Beacon
@@ -48,16 +50,71 @@ class Interface:
             exit()
 
     def scan_for_wireless_networks(self) -> Dict[str, Network]:
-        try:
-            sniff(prn=self.__handle_packet, iface=self.get_name())
 
-        except KeyboardInterrupt:
-            self.switch_mode(self._prev_mode)
-            return self.__scanned_networks
+        # check for operating system and handle command for this op
+
+        # Windows
+        if platform == 'win32':
+            # windows is not supported
+            raise OperatingSystemNotSupportedError(platform)
         
-        except PermissionError as e:
-            print(e)
-            exit()
+        # MacOS
+        elif platform == 'darwin':
+            # use airport for getting networks and returning it as xml
+            output = subprocess.getoutput('airport -s')
+
+            # skip first line because these are only headers
+            raw_network_strings = output.split('\n')[1:]
+
+            for raw_network_string in raw_network_strings:
+                # split without arguments splits on whitespace
+                splitted = raw_network_string.split()
+
+                ssid = ''
+
+                for i, info in enumerate(splitted):
+                    # info with 5 colons should be the bssid, very unlikely that someone names their access point like that
+                    # if reached the bssid we can move on because from now nothing contains extra whitespace
+                    if info.count(':') != 5:
+                        ssid += info
+                    
+                    # cut ssid part from splitted and break from loop
+                    else:
+                        splitted = splitted[i:]
+                        break
+                
+                # add network to scanned network as instance of Network
+                self.__scanned_networks[splitted[0]] = Network(
+                    bssid=splitted[0],
+                    ssid=ssid,
+                    dbm_signal=splitted[1],
+                    channel=splitted[2],
+                    # pass crypto as list because it is defined as list because when scanning on linux there are multiple cryptos
+                    crypto=[splitted[5]],
+                )
+                
+                print_scanned_network(self.__scanned_networks[splitted[0]])
+
+
+
+        
+        # Linux (value can be 'linux' or 'linux2')
+        elif 'linux' in platform:
+            try:
+                sniff(prn=self.__handle_packet, iface=self.get_name())
+
+            except KeyboardInterrupt:
+                self.switch_mode(self._prev_mode)
+                return self.__scanned_networks
+            
+            except PermissionError as e:
+                print(e)
+                exit()
+
+        # any other op
+        else:
+            raise OperatingSystemNotSupportedError(platform)
+
     
     def __handle_packet(self, packet: Packet) -> None:
         if packet.haslayer(Dot11Beacon):
@@ -95,31 +152,62 @@ class Interface:
 
 
 def get_interfaces() -> List[Interface]:
-    output = subprocess.getoutput('iwconfig').split('\n\n')
 
     interfaces = []
+
+    # check for operating system and handle command for this op
     
-    for line in output:
-        if 'no wireless' in line:
-            continue
+    # Windows
+    if platform == 'win32':
+        # windows is not supported
+        raise OperatingSystemNotSupportedError(platform)
 
-        name = ''
-        mode = ''
+    # MacOS
+    elif platform == 'darwin':
+        output = subprocess.getoutput('networksetup -listallhardwareports').lstrip().split('\n\n')
 
-        if '802' in line:
-            name = line.split(' ')[0]
+        for line in output:
+            # unnecessary line
+            if 'VLAN Configurations' in line:
+                continue
+
+            # device name is in second line after the 8 character string 'Device: '
+            name = line.split('\n')[1][8:]
+
+            interfaces.append(Interface(
+                name=name,
+                mode='unknown',
+            ))
+
+    # Linux (value can be 'linux' or 'linux2')
+    elif 'linux' in platform:
+        output = subprocess.getoutput('iwconfig').split('\n\n')
         
-        if 'Managed' in line:
-            mode = 'managed'
+        for line in output:
+            if 'no wireless' in line:
+                continue
 
-        if 'Monitor' in line:
-            mode = 'monitor'
+            name = ''
+            mode = ''
 
-        interfaces.append(Interface(
-            name = name,
-            mode = mode,
-        ))
+            if '802' in line:
+                name = line.split(' ')[0]
+            
+            if 'Managed' in line:
+                mode = 'managed'
+
+            if 'Monitor' in line:
+                mode = 'monitor'
+
+            interfaces.append(Interface(
+                name=name,
+                mode=mode,
+            ))
     
+    # any other op
+    else:
+        raise OperatingSystemNotSupportedError(platform)
+        
     return interfaces
         
 def get_interface_by_name(name: str) -> Interface:
@@ -135,4 +223,11 @@ class InterfaceNotFoundError(Exception):
     def __init__(self, interface_name: str):
         self.interface_name = interface_name
         self.message = f'No network interface "{self.interface_name}" with wireless extension found.'
+        super().__init__(self.message)
+
+class OperatingSystemNotSupportedError(Exception):
+    """Exception raised on not supported operating systems."""
+
+    def __init__(self, os_name: str):
+        self.message = f'Platform: "{os_name}" is currently not supported.'
         super().__init__(self.message)
