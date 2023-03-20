@@ -33,8 +33,6 @@ class AccessPoint(Network):
         bssid: str = ''
     ) -> None:
 
-        conf.use_pcap = True
-
         bssid = bssid if bssid else self._bssid
 
         # 802.11 frame
@@ -51,6 +49,9 @@ class AccessPoint(Network):
         self._essid = Dot11Elt(ID='SSID', info=self._ssid, len=len(self._ssid))
         # stack all the layers and add a RadioTap
         self._frame = RadioTap()/self._dot11/self._beacon/self._essid
+
+        # with use_pcap = True monitor is automatically enabled on devices when monitor=True (i think)
+        conf.use_pcap = True
 
         sendp(
             x = self._frame,
