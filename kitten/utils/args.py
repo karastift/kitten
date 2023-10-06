@@ -67,11 +67,6 @@ class ArgumentParser:
             help='Name of the interface to use (has to support monitor mode).',
         )
         deauth_parser.add_argument(
-            '-am', '--automode',
-            action='store_true',
-            help='The selected interface is automatically put into the required mode.',
-        )
-        deauth_parser.add_argument(
             '-t', '--target',
             type=str,
             default=None,
@@ -114,11 +109,6 @@ class ArgumentParser:
             type=str,
             required=False,
             help='Mac address of the fake access point. (If undefined the address is randomly chosen).',
-        )
-        fake_ap_parser.add_argument(
-            '-am', '--automode',
-            action='store_true',
-            help='The selected interface is automatically put into the required mode.',
         )
         fake_ap_parser.add_argument(
             '-i', '--interval',
@@ -196,11 +186,6 @@ class ArgumentParser:
             type=str,
             required=True,
             help='The network interface which is used to sniff (it has to support monitor mode).',
-        )
-        scan_parser.add_argument(
-            '-am', '--automode',
-            action='store_true',
-            help='The selected interface is automatically put into the required mode.',
         )
 
     def __configure_port_scan_parser(self, subparsers: argparse._SubParsersAction) -> None:
