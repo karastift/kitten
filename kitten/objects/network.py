@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from objects.interfaces import Interface
 
 from scapy.layers.dot11 import Dot11, Dot11Deauth, RadioTap, sendp
+from scapy.config import conf
 
 class Network:
 
@@ -64,6 +65,10 @@ class Network:
         )
         # stack them up
         packet = RadioTap()/dot11/Dot11Deauth(reason=7)
+
+        # with use_pcap = True monitor is automatically enabled on devices when monitor=True (i think)
+        conf.use_pcap = True
+
         # send the packet
         sendp(
             x = packet,
@@ -72,6 +77,7 @@ class Network:
             loop = not count,
             iface = interface.get_name(),
             verbose = verbose,
+            monitor = True,
         )
     
     def __str__(self) -> str:
