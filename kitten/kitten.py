@@ -64,7 +64,6 @@ class Kitten:
             elif self.method == 'networks':
 
                 interface = self.get_interface_safe(self.options['interface'])
-                self.handle_automode(interface)
 
                 print_networks_scan_info(self.options)
                 
@@ -98,8 +97,6 @@ class Kitten:
 
                 interface = self.get_interface_safe(self.options.get('interface'))
 
-                self.handle_automode(interface)
-
                 Network(bssid=self.options['network_mac']).deauth(
                     interface = interface,
                     target_mac = self.options['target'],
@@ -113,17 +110,11 @@ class Kitten:
                 
                 interface = self.get_interface_safe(self.options['interface'])
 
-                self.handle_automode(interface)                
-
                 AccessPoint(
                     ssid = self.options['ssid'],
                     bssid = self.options['mac_address'],
                     interface = interface,
                 ).appear(interval=self.options['interval'])
-    
-    def handle_automode(self, interface: Interface) -> None:
-        if self.options['automode'] and interface.get_mode() != 'monitor':
-            interface.switch_mode('monitor')
     
     def get_interface_safe(self, interface_name: str) -> Interface:
         try:
