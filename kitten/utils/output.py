@@ -85,28 +85,6 @@ attack options:
 
 sending beacon frames (press Ctrl+C to finish):''') 
 
-def print_attack_eviltwin_info(options: dict) -> None:
-    interface = options.get('interface')
-    ssid = options.get('ssid')
-    bssid = options.get('bssid')
-    interval = options.get('interval')
-
-    print_text(f'''{ENDC}
-attack options:
-| method:
-|    {BOLD}(eviltwin) imitating an existing wireless access point{ENDC}
-| interface:
-|    {BOLD}{interface}{ENDC}
-| ssid:
-|    {BOLD}{ssid}{ENDC}
-| bssid of targeted access point:
-|    {BOLD}{bssid}{ENDC}
-| interval:
-|    {BOLD}{interval}{ENDC}
- ‾‾‾
-
-sending beacon frames and deauth packets (press Ctrl+C to finish):''') 
-
 def print_attack_deauth_info(options: dict) -> None:
     target_network_mac = options.get('network_mac')
     interface = options.get('interface')

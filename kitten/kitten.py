@@ -2,14 +2,13 @@
 from ipaddress import IPv4Address
 
 from objects.accesspoint import AccessPoint
-from objects.eviltwin import EvilTwin
 from objects.interfaces import (Interface, InterfaceNotFoundError,
                                 get_interface_by_name, get_interfaces)
 from objects.machine import Machine
 from objects.network import Network
 
 from utils.args import ArgumentParser
-from utils.output import (print_attack_deauth_info, print_attack_eviltwin_info,
+from utils.output import (print_attack_deauth_info,
                           print_attack_fake_ap_info, print_network_interfaces,
                           print_network_interfaces_json,
                           print_networks_scan_info, print_port_scan_info,
@@ -121,20 +120,6 @@ class Kitten:
                     bssid = self.options['mac_address'],
                     interface = interface,
                 ).appear(interval=self.options['interval'])
-            
-            if self.method == 'eviltwin':
-                print_attack_eviltwin_info(self.options)
-
-                self.handle_automode(interface)
-
-                EvilTwin(
-                    ssid = self.options['ssid'],
-                    bssid = self.options['bssid'],
-                    interface = interface,
-                ).start(
-                    interval = self.options.get('interval'),
-                    count = self.options.get('count'),
-                )
     
     def handle_automode(self, interface: Interface) -> None:
         if self.options['automode'] and interface.get_mode() != 'monitor':

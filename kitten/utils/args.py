@@ -50,8 +50,6 @@ class ArgumentParser:
 
         self.__configure_attack_deauth_parser(subparsers)
         self.__configure_attack_fake_ap_parser(subparsers)
-        self.__configure_attack_eviltwin_parser(subparsers)
-
 
     def __configure_attack_deauth_parser(self, subparsers: argparse._SubParsersAction) -> None:
         deauth_parser = subparsers.add_parser(
@@ -123,46 +121,6 @@ class ArgumentParser:
             help='The selected interface is automatically put into the required mode.',
         )
         fake_ap_parser.add_argument(
-            '-i', '--interval',
-            type=float,
-            default=.1,
-            required=False,
-            help='Change the time between the sent packages.',
-        )
-
-    def __configure_attack_eviltwin_parser(self, subparsers: argparse._SubParsersAction) -> None:
-        eviltwin_parser = subparsers.add_parser(
-            name='eviltwin',
-            help='Create and evil twin of an existing access point and disconnect clients from that access point.',
-        )
-        eviltwin_parser.add_argument(
-            dest='ssid',
-            type=str,
-            help='Name of the targeted network.',
-        )
-        eviltwin_parser.add_argument(
-            dest='bssid',
-            type=str,
-            help='BSSID of the targeted network.',
-        )
-        eviltwin_parser.add_argument(
-            dest='interface',
-            type=str,
-            help='Name of the interface to use (has to support monitor mode).',
-        )
-        eviltwin_parser.add_argument(
-            '-m', '--mac_address',
-            default=str(RandMAC()),
-            type=str,
-            required=False,
-            help='Mac address of the fake access point. (If undefined the address is randomly chosen).',
-        )
-        eviltwin_parser.add_argument(
-            '-am', '--automode',
-            action='store_true',
-            help='The selected interface is automatically put into the required mode.',
-        )
-        eviltwin_parser.add_argument(
             '-i', '--interval',
             type=float,
             default=.1,
