@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from typing import Dict, List, Literal
 from objects.network import Network
 from scapy.layers.dot11 import sniff, Dot11, Packet, Dot11Elt, Dot11Beacon
+from scapy.config import conf
 from utils.output import print_permission_error, print_scanned_network
 
 Mode = Literal['managed', 'monitor']
@@ -100,8 +101,11 @@ class Interface:
         
         # Linux (value can be 'linux' or 'linux2')
         elif 'linux' in platform:
+            # with use_pcap = True monitor is automatically enabled on devices when monitor=True (i think)
+            conf.use_pcap = True
             try:
-                sniff(prn=self.__handle_packet, iface=self.get_name())
+                # only in monitor mode, 802.11 frames are captured
+                sniff(prn=self.__handle_packet, iface=self.get_name(), monitor=True)
 
             except KeyboardInterrupt:
                 self.switch_mode(self._prev_mode)
